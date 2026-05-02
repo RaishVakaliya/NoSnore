@@ -46,6 +46,13 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  @keyframes progress {
+    0% { transform: scaleX(0); opacity: 1; }
+    50% { transform: scaleX(0.7); opacity: 1; }
+    100% { transform: scaleX(1); opacity: 0; }
+  }
+  --animate-progress: progress 2s ease-in-out infinite;
 }
 
 :root {
@@ -123,6 +130,16 @@
   }
   body {
     @apply bg-black text-foreground;
+    /* Custom Scrollbar */
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+    &::-webkit-scrollbar-track {
+      @apply bg-transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      @apply bg-white/10 rounded-full border-4 border-black transition-colors hover:bg-white/20;
+    }
   }
   html {
     @apply font-sans;

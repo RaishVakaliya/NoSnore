@@ -2,17 +2,27 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import { SignInButton, SignUpButton, SignOutButton } from "@clerk/nextjs";
+import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const NAV_LINKS = [
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Languages", href: "#languages" },
+  { label: "Features", href: "/#features" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "Languages", href: "/#languages" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const user = useQuery(api.users.getMe);
+  const [navPositions, setNavPositions] = useState<
+    { left: number; width: number }[]
+  >([]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -43,6 +53,7 @@ export default function Navbar() {
                 loop
                 muted
                 playsInline
+                preload="metadata"
                 className="h-full w-full object-cover"
               />
             </div>
@@ -56,34 +67,108 @@ export default function Navbar() {
           </Link>
 
           <nav
-            className="hidden items-center gap-0.5 md:flex"
+            className="relative hidden items-center gap-1 md:flex"
             aria-label="Main navigation"
+            onMouseLeave={() => setHoveredIndex(null)}
           >
-            {NAV_LINKS.map((item) => (
+            <div
+              className="absolute h-8 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm transition-all duration-300 ease-out"
+              style={{
+                left:
+                  hoveredIndex !== null ? navPositions[hoveredIndex]?.left : 0,
+                width:
+                  hoveredIndex !== null ? navPositions[hoveredIndex]?.width : 0,
+                opacity: hoveredIndex !== null ? 1 : 0,
+                visibility: hoveredIndex !== null ? "visible" : "hidden",
+              }}
+            />
+
+            {NAV_LINKS.map((item, index) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-full px-4 py-1.5 text-sm font-medium text-zinc-400 transition-all duration-150 hover:bg-white/8 hover:text-white"
+                onMouseEnter={(e) => {
+                  const target = e.currentTarget;
+                  setNavPositions((prev) => {
+                    const newPositions = [...prev];
+                    newPositions[index] = {
+                      left: target.offsetLeft,
+                      width: target.offsetWidth,
+                    };
+                    return newPositions;
+                  });
+                  setHoveredIndex(index);
+                }}
+                className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-300 ${
+                  hoveredIndex === index
+                    ? "text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
               >
                 {item.label}
               </Link>
             ))}
+
+            <Authenticated>
+              <Link
+                href="/dashboard"
+                onMouseEnter={(e) => {
+                  const target = e.currentTarget;
+                  const index = NAV_LINKS.length;
+                  setNavPositions((prev) => {
+                    const newPositions = [...prev];
+                    newPositions[index] = {
+                      left: target.offsetLeft,
+                      width: target.offsetWidth,
+                    };
+                    return newPositions;
+                  });
+                  setHoveredIndex(index);
+                }}
+                className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-300 ${
+                  hoveredIndex === NAV_LINKS.length
+                    ? "text-white"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                Dashboard
+              </Link>
+            </Authenticated>
           </nav>
 
+          {/* User Section */}
           <div className="flex items-center gap-1 pr-1">
-            <Link
-              href="/login"
-              className="hidden rounded-full px-4 py-1.5 text-sm font-medium text-zinc-400 transition-colors duration-150 hover:text-white md:block"
-            >
-              Sign in
-            </Link>
+            <Unauthenticated>
+              <SignUpButton mode="modal">
+                <button className="inline-flex h-8 items-center gap-1.5 rounded-full bg-zinc-900 border border-white/10 px-4 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-zinc-800 hover:border-white/20 active:scale-[0.98]">
+                  Get Started
+                </button>
+              </SignUpButton>
+            </Unauthenticated>
 
-            <Link
-              href="/dashboard"
-              className="inline-flex h-8 items-center gap-1.5 rounded-full bg-white px-4 text-sm font-semibold text-zinc-900 shadow-sm transition-all duration-150 hover:bg-zinc-100 hover:shadow-md active:scale-[0.98]"
-            >
-              Get Started
-            </Link>
+            <Authenticated>
+              <div className="flex items-center gap-1">
+                <Link
+                  href="/profile"
+                  className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-white/5 border border-white/10 text-zinc-400 transition-all hover:bg-white/10 hover:text-white hover:border-white/20"
+                  aria-label="View Profile"
+                >
+                  {user?.imageUrl ? (
+                    <img
+                      src={user.imageUrl}
+                      alt={user.name || "Profile"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4" />
+                  )}
+                </Link>
+              </div>
+            </Authenticated>
+
+            <AuthLoading>
+              <div className="h-8 w-8 animate-pulse rounded-full bg-white/10" />
+            </AuthLoading>
 
             <button
               id="navbar-mobile-toggle"
@@ -123,20 +208,35 @@ export default function Navbar() {
           ))}
 
           <div className="mt-1 border-t border-white/[0.06] pt-2 flex flex-col gap-1.5">
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/dashboard"
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-zinc-100"
-            >
-              Get Started
-            </Link>
+            <Unauthenticated>
+              <SignInButton mode="modal">
+                <button className="rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:bg-white/5 hover:text-white text-left">
+                  Sign in
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button className="flex items-center justify-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-zinc-100">
+                  Get Started
+                </button>
+              </SignUpButton>
+            </Unauthenticated>
+
+            <Authenticated>
+              <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:bg-white/5 hover:text-white"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/profile"
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-500 transition-colors hover:bg-white/5 hover:text-white"
+              >
+                Profile Settings
+              </Link>
+            </Authenticated>
           </div>
         </nav>
       </div>

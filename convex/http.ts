@@ -1,6 +1,7 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api } from "./_generated/api";
+import { Webhook } from "svix";
 
 const http = httpRouter();
 
@@ -79,6 +80,59 @@ const handleOptions = httpAction(async (ctx, request) => {
       "Access-Control-Allow-Headers": "Content-Type",
     }),
   });
+});
+
+const handleClerkWebhook = httpAction(async (ctx, request) => {
+  const body = await request.text();
+  const headerPayload = request.headers;
+
+  const svixId = headerPayload.get("svix-id");
+  const svixTimestamp = headerPayload.get("svix-timestamp");
+  const svixSignature = headerPayload.get("svix-signature");
+
+  if (!svixId || !svixTimestamp || !svixSignature) {
+    return new Response("Missing svix headers", { status: 400 });
+  }
+
+  const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    return new Response("Webhook secret not set", { status: 500 });
+  }
+
+  const wh = new Webhook(webhookSecret);
+  let evt: any;
+
+  try {
+    evt = wh.verify(body, {
+      "svix-id": svixId,
+      "svix-timestamp": svixTimestamp,
+      "svix-signature": svixSignature,
+    }) as any;
+  } catch (err) {
+    return new Response("Error verifying webhook", { status: 400 });
+  }
+
+  const { type, data } = evt;
+
+  if (type === "user.created" || type === "user.updated") {
+    const email = data.email_addresses[0]?.email_address;
+    const name = `${data.first_name || ""} ${data.last_name || ""}`.trim();
+
+    await ctx.runMutation(api.users.upsertUser, {
+      clerkId: data.id,
+      email: email,
+      name: name || undefined,
+      imageUrl: data.image_url || undefined,
+    });
+  }
+
+  return new Response("Success", { status: 200 });
+});
+
+http.route({
+  path: "/clerk-webhook",
+  method: "POST",
+  handler: handleClerkWebhook,
 });
 
 ["/services", "/api/services", "/services/", "/api/services/"].forEach(

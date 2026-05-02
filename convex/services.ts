@@ -9,7 +9,18 @@ export const create = mutation({
     isActive: v.boolean(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) throw new Error("User not found in database");
+
     const serviceId = await ctx.db.insert("services", {
+      userId: user._id,
       name: args.name,
       url: args.url,
       interval: args.interval,
@@ -21,19 +32,55 @@ export const create = mutation({
 });
 
 export const list = query({
-  args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("services").order("desc").collect();
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return [];
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) return [];
+
+    return await ctx.db
+      .query("services")
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
+      .order("desc")
+      .collect();
   },
 });
 
 export const listActive = query({
-  args: {},
   handler: async (ctx) => {
     return await ctx.db
       .query("services")
       .filter((q) => q.eq(q.field("isActive"), true))
       .collect();
+  },
+});
+
+export const getMyStats = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) return null;
+
+    const services = await ctx.db
+      .query("services")
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
+      .collect();
+
+    return {
+      totalServices: services.length,
+      activeServices: services.filter((s) => s.isActive).length,
+    };
   },
 });
 
@@ -60,6 +107,21 @@ export const updateService = mutation({
     isActive: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) throw new Error("User not found");
+
+    const service = await ctx.db.get(args.id);
+    if (!service || service.userId !== user._id) {
+      throw new Error("Unauthorized or service not found");
+    }
+
     const { id, ...rest } = args;
     await ctx.db.patch(id, rest);
   },
@@ -70,6 +132,21 @@ export const deleteService = mutation({
     id: v.id("services"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user) throw new Error("User not found");
+
+    const service = await ctx.db.get(args.id);
+    if (!service || service.userId !== user._id) {
+      throw new Error("Unauthorized or service not found");
+    }
+
     await ctx.db.delete(args.id);
   },
 });
