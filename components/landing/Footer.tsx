@@ -4,9 +4,9 @@ import { Separator } from "@/components/ui/separator";
 
 const links = {
   Product: [
-    { label: "Features", href: "#features" },
-    { label: "How It Works", href: "#how-it-works" },
-    { label: "Languages", href: "#languages" },
+    { label: "Features", href: "/#features" },
+    { label: "How It Works", href: "/#how-it-works" },
+    { label: "Languages", href: "/#languages" },
   ],
   Resources: [
     { label: "Documentation", href: "#" },

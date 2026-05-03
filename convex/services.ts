@@ -60,6 +60,17 @@ export const listActive = query({
   },
 });
 
+export const getRecentLogs = query({
+  args: { serviceId: v.id("services") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("pingLogs")
+      .filter((q) => q.eq(q.field("serviceId"), args.serviceId))
+      .order("desc")
+      .take(5);
+  },
+});
+
 export const getMyStats = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -94,6 +105,23 @@ export const updateStatus = mutation({
     await ctx.db.patch(args.id, {
       status: args.status,
       lastPingedAt: args.lastPingedAt,
+    });
+  },
+});
+
+export const addLog = mutation({
+  args: {
+    serviceId: v.id("services"),
+    status: v.number(),
+    responseTime: v.number(),
+    timestamp: v.number(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.insert("pingLogs", {
+      serviceId: args.serviceId,
+      status: args.status,
+      responseTime: args.responseTime,
+      timestamp: args.timestamp,
     });
   },
 });

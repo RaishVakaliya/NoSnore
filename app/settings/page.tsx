@@ -211,7 +211,7 @@ export default function SettingsPage() {
                 <Button
                   variant="destructive"
                   onClick={() => setShowDeleteModal(true)}
-                  className="h-12 w-full rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-500/20"
+                  className="h-12 w-full rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-all"
                 >
                   Delete Permanently
                 </Button>
@@ -245,13 +245,13 @@ export default function SettingsPage() {
                   <Button
                     variant="outline"
                     onClick={() => setShowLogoutModal(false)}
-                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20"
+                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={() => signOut(() => router.push("/"))}
-                    className="flex-1 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 transition-all"
+                    className="flex-1 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all"
                   >
                     Sign Out
                   </Button>
@@ -276,13 +276,13 @@ export default function SettingsPage() {
                   <Button
                     variant="outline"
                     onClick={() => setShowDeactivateModal(false)}
-                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20"
+                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleDeactivateAccount}
-                    className="flex-1 rounded-xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 shadow-lg shadow-yellow-500/10 transition-all"
+                    className="flex-1 rounded-xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 transition-all"
                   >
                     Confirm
                   </Button>
@@ -310,7 +310,7 @@ export default function SettingsPage() {
                   <Button
                     variant="outline"
                     onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/10 hover:border-white/20"
+                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white"
                   >
                     Cancel
                   </Button>
@@ -318,7 +318,7 @@ export default function SettingsPage() {
                     variant="destructive"
                     onClick={handleDeleteAccount}
                     disabled={isDeleting}
-                    className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 shadow-lg shadow-red-500/20"
+                    className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700"
                   >
                     {isDeleting ? "Deleting..." : "Yes, Delete Everything"}
                   </Button>

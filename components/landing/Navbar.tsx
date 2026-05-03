@@ -42,8 +42,8 @@ export default function Navbar() {
           ].join(" ")}
         >
           <Link
-            href="#home"
-            aria-label="NoSnore home"
+            href="/dashboard"
+            aria-label="NoSnore dashboard"
             className="group flex shrink-0 items-center gap-2.5 rounded-full pl-1.5 pr-4 py-1"
           >
             <div className="relative flex h-8 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full transition-transform duration-200">
