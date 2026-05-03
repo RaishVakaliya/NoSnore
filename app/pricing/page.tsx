@@ -52,7 +52,7 @@ export default function PricingPage() {
             <div className="mt-10">
               <Button
                 variant="outline"
-                className="w-full rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-white/10 hover:border-white/20 transition-all"
+                className="w-full rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-gray-400 hover:border-gray-400 hover:text-black transition-all"
               >
                 Get started for free
               </Button>

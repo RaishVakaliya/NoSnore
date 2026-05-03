@@ -10,7 +10,7 @@ const links = {
   ],
   Resources: [
     { label: "Documentation", href: "#" },
-    { label: "API Reference", href: "#" },
+    { label: "Contact Us", href: "/contact" },
     { label: "Changelog", href: "#" },
   ],
   Legal: [
@@ -32,7 +32,7 @@ export default function Footer() {
             <Link href="#home" className="flex items-center gap-2 group mb-4">
               <span className="flex h-10 w-16 items-center justify-center overflow-hidden rounded-lg bg-zinc-900 shadow-lg shadow-white/5 transition-transform group-hover:scale-105">
                 <video
-                  src="/app_logo_video.mp4"
+                  src="/app_logo_video.webm"
                   autoPlay
                   loop
                   muted

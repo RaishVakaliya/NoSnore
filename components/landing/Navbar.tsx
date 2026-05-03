@@ -10,9 +10,9 @@ import { api } from "@/convex/_generated/api";
 
 const NAV_LINKS = [
   { label: "Features", href: "/#features" },
-  { label: "Pricing", href: "/pricing" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Languages", href: "/#languages" },
+  { label: "Pricing", href: "/pricing" },
 ];
 
 export default function Navbar() {
@@ -46,9 +46,9 @@ export default function Navbar() {
             aria-label="NoSnore home"
             className="group flex shrink-0 items-center gap-2.5 rounded-full pl-1.5 pr-4 py-1"
           >
-            <div className="relative flex h-8 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full transition-transform duration-200">
+            <div className="relative flex h-8 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full transition-transform duration-200">
               <video
-                src="/app_logo_video.mp4"
+                src="/app_logo_video.webm"
                 autoPlay
                 loop
                 muted
@@ -150,18 +150,22 @@ export default function Navbar() {
               <div className="flex items-center gap-1">
                 <Link
                   href="/profile"
-                  className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-white/5 border border-white/10 text-zinc-400 transition-all hover:bg-white/10 hover:text-white hover:border-white/20"
+                  className="group relative flex h-9 w-9 items-center justify-center"
                   aria-label="View Profile"
                 >
-                  {user?.imageUrl ? (
-                    <img
-                      src={user.imageUrl}
-                      alt={user.name || "Profile"}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <User className="h-4 w-4" />
-                  )}
+                  <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-zinc-900 shadow-xl">
+                    {user?.imageUrl ? (
+                      <img
+                        src={user.imageUrl}
+                        alt={user.name || "Profile"}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <User className="h-4 w-4 text-zinc-400" />
+                    )}
+
+                    <span className="pointer-events-none absolute w-[200%] h-[200%] bg-[linear-gradient(135deg,transparent_45%,rgba(255,255,255,0.5)_50%,transparent_55%)] animate-[beamMove_2.5s_linear_infinite]" />
+                  </div>
                 </Link>
               </div>
             </Authenticated>

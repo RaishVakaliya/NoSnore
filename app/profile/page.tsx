@@ -19,7 +19,6 @@ export default function ProfilePage() {
 
       <main className="mx-auto max-w-4xl px-6 pt-32 pb-24">
         <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 p-8 backdrop-blur-xl sm:p-12">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/10 blur-[80px]" />
           <div className="relative flex flex-col items-center gap-8 sm:flex-row sm:items-start">
             <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-2xl border-4 border-white/10 shadow-2xl">
               {user?.imageUrl ? (
@@ -54,17 +53,10 @@ export default function ProfilePage() {
               </p>
 
               <div className="flex flex-wrap justify-center gap-3 sm:justify-start">
-                <Button
-                  variant="outline"
-                  className="h-9 rounded-xl border-white/10 bg-white/5 text-xs font-semibold hover:bg-white/10"
-                >
-                  <Edit2 className="mr-2 h-3 w-3" />
-                  Edit Profile
-                </Button>
                 <Link href="/settings">
                   <Button
                     variant="outline"
-                    className="h-9 rounded-xl border-white/10 bg-white/5 text-xs font-semibold hover:bg-white/10"
+                    className="h-9 rounded-xl border-white/10 bg-white/5 text-xs font-semibold text-white transition-all"
                   >
                     Account Settings
                   </Button>
@@ -75,30 +67,29 @@ export default function ProfilePage() {
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
-          <div className="rounded-3xl border border-white/5 bg-zinc-900/40 p-8 transition-colors hover:bg-zinc-900/60">
-            <div className="mb-6 flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400">
-                <Shield className="h-5 w-5" />
+          <Link href="/pricing" className="block group">
+            <div className="h-full rounded-3xl border border-white/5 bg-zinc-900/40 p-8 transition-all hover:bg-zinc-900/60 hover:border-emerald-500/30">
+              <div className="mb-6 flex items-center justify-between">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 group-hover:bg-emerald-500/10 group-hover:text-emerald-400 transition-colors">
+                  <Shield className="h-5 w-5" />
+                </div>
+                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider group-hover:text-emerald-500/50 transition-colors">
+                  Current Plan
+                </span>
               </div>
-              <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                Current Plan
-              </span>
+              <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
+                {user?.plan === "pro" ? "Enterprise Pro" : "Personal Free"}
+              </h3>
+              <p className="text-sm text-zinc-400 mb-6">
+                {user?.plan === "pro"
+                  ? "Unlimited endpoints and 1-min intervals enabled."
+                  : "Limited to 3 endpoints and 15-min intervals."}
+              </p>
+              <div className="inline-flex items-center text-emerald-400 hover:text-emerald-300 text-sm font-semibold">
+                Upgrade your plan →
+              </div>
             </div>
-            <h3 className="text-xl font-bold text-white mb-1">
-              {user?.plan === "pro" ? "Enterprise Pro" : "Personal Free"}
-            </h3>
-            <p className="text-sm text-zinc-400 mb-6">
-              {user?.plan === "pro"
-                ? "Unlimited endpoints and 1-min intervals enabled."
-                : "Limited to 3 endpoints and 15-min intervals."}
-            </p>
-            <Button
-              variant="link"
-              className="h-auto p-0 text-emerald-400 hover:text-emerald-300 text-sm font-semibold"
-            >
-              Upgrade your plan →
-            </Button>
-          </div>
+          </Link>
 
           <div className="rounded-3xl border border-white/5 bg-zinc-900/40 p-8 transition-colors hover:bg-zinc-900/60">
             <div className="mb-6 flex items-center justify-between">

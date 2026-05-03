@@ -10,7 +10,7 @@ export default function Loading() {
           <div className="absolute inset-0 bg-emerald-500/20 blur-xl animate-pulse" />
 
           <video
-            src="/app_logo_video.mp4"
+            src="/app_logo_video.webm"
             autoPlay
             loop
             muted
