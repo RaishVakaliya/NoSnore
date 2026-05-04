@@ -34,7 +34,6 @@ export default function PricingPage() {
                 "15-minute ping intervals",
                 "Up to 3 active endpoints",
                 "Public uptime dashboards",
-                "Community-driven support",
               ].map((feature) => (
                 <li
                   key={feature}
@@ -76,7 +75,6 @@ export default function PricingPage() {
                 "1-minute real-time pinging",
                 "Unlimited endpoint monitoring",
                 "Private status pages with custom branding",
-                "API access for custom integrations",
               ].map((feature) => (
                 <li
                   key={feature}

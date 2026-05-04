@@ -139,7 +139,6 @@
   }
   body {
     @apply bg-black text-foreground;
-    /* Custom Scrollbar */
     &::-webkit-scrollbar {
       width: 10px;
     }

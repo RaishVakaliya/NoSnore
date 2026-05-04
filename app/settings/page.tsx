@@ -20,6 +20,16 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -28,6 +38,7 @@ export default function SettingsPage() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<any>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const user = useQuery(api.users.getMe);
@@ -46,9 +57,11 @@ export default function SettingsPage() {
     }
   };
 
-  const handleDeleteService = async (id: any) => {
+  const handleDeleteService = async () => {
+    if (!serviceToDelete) return;
     try {
-      await deleteService({ id });
+      await deleteService({ id: serviceToDelete });
+      setServiceToDelete(null);
     } catch (error) {
       console.error(error);
     }
@@ -146,7 +159,7 @@ export default function SettingsPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDeleteService(service._id)}
+                      onClick={() => setServiceToDelete(service._id)}
                       className="h-9 w-9 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -219,115 +232,128 @@ export default function SettingsPage() {
             </div>
           </section>
         </div>
-
-        {(showLogoutModal || showDeactivateModal || showDeleteModal) && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
-              onClick={() => {
-                setShowLogoutModal(false);
-                setShowDeactivateModal(false);
-                setShowDeleteModal(false);
-              }}
-            />
-
-            {showLogoutModal && (
-              <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-zinc-950 p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-white">
-                  <LogOut className="h-6 w-6" />
-                </div>
-                <h2 className="text-2xl font-bold text-white mb-2">Sign Out</h2>
-                <p className="text-zinc-400 mb-8">
-                  Are you sure you want to sign out? You will need to sign back
-                  in to access your dashboard.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowLogoutModal(false)}
-                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={() => signOut(() => router.push("/"))}
-                    className="flex-1 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all"
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {showDeactivateModal && (
-              <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-zinc-950 p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-500/10 text-yellow-400">
-                  <UserX className="h-6 w-6" />
-                </div>
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  {user?.isActive ? "Deactivate" : "Reactivate"} Account
-                </h2>
-                <p className="text-zinc-400 mb-8">
-                  {user?.isActive
-                    ? "This will pause all monitoring services. You can reactivate anytime."
-                    : "This will resume all your monitoring services."}
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowDeactivateModal(false)}
-                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleDeactivateAccount}
-                    className="flex-1 rounded-xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 transition-all"
-                  >
-                    Confirm
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {showDeleteModal && (
-              <div className="relative w-full max-w-md rounded-3xl border border-red-500/20 bg-zinc-950 p-8 shadow-2xl animate-in zoom-in-95 duration-200">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
-                  <AlertTriangle className="h-6 w-6" />
-                </div>
-                <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
-                  Delete Account
-                </h2>
-                <p className="text-zinc-400 mb-8 leading-relaxed">
-                  This action is{" "}
-                  <span className="text-red-400 font-bold underline underline-offset-4">
-                    irreversible
-                  </span>
-                  . All your services, logs, and monitoring data will be
-                  permanently deleted from NoSnore and your Clerk account.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 rounded-xl border-white/10 bg-white/5 text-white"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleDeleteAccount}
-                    disabled={isDeleting}
-                    className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700"
-                  >
-                    {isDeleting ? "Deleting..." : "Yes, Delete Everything"}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
       </main>
+
+      <AlertDialog
+        open={!!serviceToDelete}
+        onOpenChange={(open) => !open && setServiceToDelete(null)}
+      >
+        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
+              Delete Service?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400 mb-4">
+              Are you sure you want to delete this service? This action cannot
+              be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteService}
+              className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
+          <AlertDialogHeader>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-white">
+              <LogOut className="h-6 w-6" />
+            </div>
+            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
+              Sign Out
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400 mb-8">
+              Are you sure you want to sign out? You will need to sign back in
+              to access your dashboard.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => signOut(() => router.push("/"))}
+              className="flex-1 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all"
+            >
+              Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={showDeactivateModal}
+        onOpenChange={setShowDeactivateModal}
+      >
+        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
+          <AlertDialogHeader>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-500/10 text-yellow-400">
+              <UserX className="h-6 w-6" />
+            </div>
+            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
+              {user?.isActive ? "Deactivate" : "Reactivate"} Account
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400 mb-8">
+              {user?.isActive
+                ? "This will pause all monitoring services. You can reactivate anytime."
+                : "This will resume all your monitoring services."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeactivateAccount}
+              className="flex-1 rounded-xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 transition-all"
+            >
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <AlertDialogContent className="rounded-3xl border-red-500/20 bg-zinc-950 p-8 shadow-2xl">
+          <AlertDialogHeader>
+            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+            <AlertDialogTitle className="text-2xl font-bold text-white mb-2 tracking-tight">
+              Delete Account
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400 mb-8 leading-relaxed">
+              This action is{" "}
+              <span className="text-red-400 font-bold underline underline-offset-4">
+                irreversible
+              </span>
+              . All your services, logs, and monitoring data will be permanently
+              deleted from NoSnore and your Clerk account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 transition-all"
+            >
+              {isDeleting ? "Deleting..." : "Yes, Delete Everything"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>

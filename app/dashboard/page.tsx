@@ -22,6 +22,24 @@ import {
 import { useState } from "react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function DashboardPage() {
   const user = useQuery(api.users.getMe);
@@ -38,6 +56,7 @@ export default function DashboardPage() {
     url: "",
     interval: 15,
   });
+  const [serviceToDelete, setServiceToDelete] = useState<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,10 +79,11 @@ export default function DashboardPage() {
     }
   };
 
-  const handleDelete = async (id: any) => {
-    if (!confirm("Are you sure you want to delete this service?")) return;
+  const handleDelete = async () => {
+    if (!serviceToDelete) return;
     try {
-      await deleteService({ id });
+      await deleteService({ id: serviceToDelete });
+      setServiceToDelete(null);
     } catch (error) {
       console.error(error);
     }
@@ -75,7 +95,8 @@ export default function DashboardPage() {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
 
     let relative = "";
-    if (seconds < 60) relative = `${seconds}s ago`;
+    if (seconds < 0) relative = "Just now";
+    else if (seconds < 60) relative = `${seconds}s ago`;
     else {
       const mins = Math.floor(seconds / 60);
       relative = `${mins}m ago`;
@@ -168,7 +189,9 @@ export default function DashboardPage() {
               Uptime Score
             </h2>
             <p className="text-4xl font-black text-white tracking-tight">
-              100%
+              {stats?.totalServices && stats.totalServices > 0
+                ? `${Math.round((stats.activeServices / stats.totalServices) * 100)}%`
+                : "—"}
             </p>
           </div>
         </div>
@@ -197,7 +220,10 @@ export default function DashboardPage() {
           {!services ? (
             <div className="grid gap-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-white/5 bg-zinc-900/40 p-6">
+                <div
+                  key={i}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-white/5 bg-zinc-900/40 p-6"
+                >
                   <div className="flex items-start gap-4">
                     <Skeleton className="mt-1 h-3 w-3 shrink-0 rounded-full" />
                     <div className="space-y-2">
@@ -234,7 +260,7 @@ export default function DashboardPage() {
               <Button
                 onClick={() => setShowAddModal(true)}
                 variant="outline"
-                className="rounded-xl border-white/10 bg-white/5 hover:bg-white/10"
+                className="rounded-xl border-white/10 bg-white/5 hover:bg-white/60"
               >
                 Add My First Service
               </Button>
@@ -306,7 +332,7 @@ export default function DashboardPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleDelete(service._id)}
+                        onClick={() => setServiceToDelete(service._id)}
                         className="h-10 w-10 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-all"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -326,7 +352,7 @@ export default function DashboardPage() {
               onClick={() => !isSubmitting && setShowAddModal(false)}
             />
             <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-1 shadow-2xl animate-in zoom-in-95 duration-300">
-              <div className="bg-zinc-900/50 p-8">
+              <div className="bg-zinc-900/50 p-8 rounded-2xl">
                 <div className="flex items-center justify-between mb-8">
                   <div className="space-y-1">
                     <h2 className="text-2xl font-black text-white">
@@ -392,30 +418,49 @@ export default function DashboardPage() {
                     <label className="text-sm font-bold text-zinc-400 ml-1">
                       Ping Interval
                     </label>
-                    <select
-                      value={formData.interval}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          interval: parseInt(e.target.value),
-                        })
+                    <Select
+                      value={formData.interval.toString()}
+                      onValueChange={(val) =>
+                        setFormData({ ...formData, interval: parseInt(val) })
                       }
-                      className="w-full h-12 rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all appearance-none"
                     >
-                      <option value={1}>Every 1 Minute (Pro)</option>
-                      <option value={5}>Every 5 Minutes (Pro)</option>
-                      <option value={15}>Every 15 Minutes (Free)</option>
-                      <option value={30}>Every 30 Minutes (Free)</option>
-                    </select>
+                      <SelectTrigger className="w-full h-12 rounded-xl border-white/5 bg-white/5 text-white focus:ring-emerald-500/50">
+                        <SelectValue placeholder="Select frequency" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-white/10 bg-zinc-900 text-white z-[200]">
+                        <SelectItem value="1">Every 1 Minute (Pro)</SelectItem>
+                        <SelectItem value="5">Every 5 Minutes (Pro)</SelectItem>
+                        <SelectItem value="15">
+                          Every 15 Minutes (Free)
+                        </SelectItem>
+                        <SelectItem value="30">
+                          Every 30 Minutes (Free)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="pt-4">
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full h-12 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-50"
+                      className="group relative w-full h-14 overflow-hidden rounded-2xl bg-orange-600 px-8 font-black text-white transition-all duration-300 active:scale-[0.98] disabled:opacity-50"
                     >
-                      {isSubmitting ? "Creating..." : "Start Monitoring"}
+                      <div className="relative z-10 flex items-center justify-center gap-2 tracking-tight">
+                        {isSubmitting ? (
+                          <>
+                            <RotateCw className="h-5 w-5 animate-spin" />
+                            <span>Igniting...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
+                            <span>Start Monitoring</span>
+                          </>
+                        )}
+                      </div>
+                      <div className="absolute inset-0 z-0 bg-gradient-to-tr from-orange-600 via-rose-500 to-amber-400 opacity-100 transition-transform duration-500 group-hover:scale-110" />
+                      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.2)_100%)] opacity-50" />
                     </Button>
                   </div>
                 </form>
@@ -424,6 +469,34 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
+
+      <AlertDialog
+        open={!!serviceToDelete}
+        onOpenChange={(open) => !open && setServiceToDelete(null)}
+      >
+        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
+              Are you absolutely sure?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-zinc-400 mb-4">
+              This action cannot be undone. This will permanently delete the
+              service and all its associated ping history.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
+            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all"
+            >
+              Delete Service
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Footer />
     </div>

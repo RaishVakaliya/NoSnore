@@ -136,7 +136,6 @@ export default function Navbar() {
             </Authenticated>
           </nav>
 
-          {/* User Section */}
           <div className="flex items-center gap-1 pr-1">
             <Unauthenticated>
               <SignUpButton mode="modal">

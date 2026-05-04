@@ -26,11 +26,7 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <section
-      id="how-it-works"
-      className="relative bg-zinc-950 py-24 px-6"
-    >
-      {/* subtle gradient top */}
+    <section id="how-it-works" className="relative bg-zinc-950 py-24 px-6">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent" />
 
       <div className="mx-auto max-w-6xl">
@@ -50,16 +46,20 @@ export default function HowItWorksSection() {
           {steps.map((step, i) => (
             <div key={step.step}>
               <div className="grid items-center gap-8 lg:grid-cols-2">
-                {/* Text side */}
-                <div className={`flex flex-col gap-4 ${i % 2 === 1 ? "lg:order-2" : ""}`}>
-                  <span className="text-5xl font-black text-white/5">{step.step}</span>
+                <div
+                  className={`flex flex-col gap-4 ${i % 2 === 1 ? "lg:order-2" : ""}`}
+                >
+                  <span className="text-5xl font-black text-white/5">
+                    {step.step}
+                  </span>
                   <h3 className="text-2xl font-bold text-white -mt-8">
                     {step.title}
                   </h3>
-                  <p className="text-zinc-400 leading-relaxed">{step.description}</p>
+                  <p className="text-zinc-400 leading-relaxed">
+                    {step.description}
+                  </p>
                 </div>
 
-                {/* Code side */}
                 <div className={`${i % 2 === 1 ? "lg:order-1" : ""}`}>
                   <div className="rounded-xl border border-white/10 bg-black/60 p-5 font-mono text-sm shadow-2xl shadow-white/5">
                     <div className="mb-3 flex gap-1.5">
