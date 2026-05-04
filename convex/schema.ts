@@ -9,7 +9,11 @@ export default defineSchema({
     imageUrl: v.optional(v.string()),
     plan: v.string(),
     isActive: v.boolean(),
-  }).index("by_clerkId", ["clerkId"]),
+    stripeCustomerId: v.optional(v.string()),
+    subscriptionId: v.optional(v.string()),
+  })
+    .index("by_clerkId", ["clerkId"])
+    .index("by_stripeCustomerId", ["stripeCustomerId"]),
 
   services: defineTable({
     userId: v.id("users"),
