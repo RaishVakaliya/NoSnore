@@ -22,6 +22,8 @@ export const metadata: Metadata = {
     "NoSnore is an uptime monitoring and backend wake-up service. Register your endpoints and let NoSnore ping them on a schedule to prevent cold starts.",
 };
 
+import { Toaster } from "@/components/ui/sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +35,10 @@ export default function RootLayout({
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          {children}
+          <Toaster />
+        </ConvexClientProvider>
       </body>
     </html>
   );

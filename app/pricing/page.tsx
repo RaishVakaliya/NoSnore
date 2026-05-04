@@ -1,9 +1,36 @@
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function PricingPage() {
+  const { isSignedIn } = useUser();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleProCheckout = async () => {
+    if (!isSignedIn) {
+      router.push("/sign-in");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/stripe/checkout", { method: "POST" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <Navbar />
@@ -32,7 +59,7 @@ export default function PricingPage() {
               {[
                 "Access to basic monitoring tools",
                 "15-minute ping intervals",
-                "Up to 3 active endpoints",
+                "Up to 2 active endpoints",
                 "Public uptime dashboards",
               ].map((feature) => (
                 <li
@@ -61,7 +88,7 @@ export default function PricingPage() {
           <div className="relative flex flex-col rounded-3xl border border-emerald-500/20 bg-zinc-900 p-10 text-left shadow-2xl lg:scale-105 z-10">
             <h2 className="text-2xl font-bold text-white">Pro</h2>
             <div className="mt-4 flex items-baseline gap-1">
-              <span className="text-5xl font-black text-white">$19</span>
+              <span className="text-5xl font-black text-white">$10</span>
               <span className="text-sm font-medium text-zinc-500">/month</span>
             </div>
             <p className="mt-4 text-sm text-zinc-400 leading-relaxed">
@@ -90,8 +117,12 @@ export default function PricingPage() {
             </ul>
 
             <div className="mt-10">
-              <Button className="w-full rounded-xl bg-emerald-600 py-6 text-base font-semibold text-white hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-500/10">
-                Get started
+              <Button
+                onClick={handleProCheckout}
+                disabled={loading}
+                className="w-full rounded-xl bg-emerald-600 py-6 text-base font-semibold text-white hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-500/10 disabled:opacity-60"
+              >
+                {loading ? "Redirecting..." : "Get started"}
               </Button>
             </div>
           </div>

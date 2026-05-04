@@ -52,7 +52,7 @@ export default function HeroSection() {
           <Link href="/dashboard">
             <Button
               size="lg"
-              className="gap-2 bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl shadow-white/10 transition-all hover:shadow-emerald-500/20 hover:-translate-y-0.5"
+              className="gap-2 bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-400 hover:to-emerald-400 text-white border-0 cursor-pointer"
             >
               Start Monitoring Free
               <ArrowRight className="h-4 w-4" />
@@ -66,7 +66,7 @@ export default function HeroSection() {
             <Button
               size="lg"
               variant="outline"
-              className="gap-2 border-white/10 bg-white/5 text-white hover:bg-white/10"
+              className="gap-2 border-white/10 bg-white/5 text-white cursor-pointer"
             >
               View on GitHub
             </Button>

@@ -1,7 +1,7 @@
 "use client";
 
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { Button } from "@/components/ui/button";
 import {
   Mail,

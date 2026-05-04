@@ -2,46 +2,32 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Plus,
   Activity,
   Globe,
   ShieldCheck,
-  Trash2,
-  ExternalLink,
-  Clock,
   RotateCw,
   AlertCircle,
-  X,
-  Info,
 } from "lucide-react";
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import AddServiceModal from "./AddServiceModal";
+import DeleteServiceModal from "./DeleteServiceModal";
+import { StatsCard, ServiceCard } from "./DashboardComponents";
+import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
+import Unauthorized from "@/components/shared/Unauthorized";
+import Loading from "@/app/loading";
 
-export default function DashboardPage() {
+function DashboardContent() {
+  const { isLoaded, isSignedIn } = useUser();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const user = useQuery(api.users.getMe);
   const services = useQuery(api.services.list);
   const stats = useQuery(api.services.getMyStats);
@@ -50,18 +36,30 @@ export default function DashboardPage() {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    url: "",
-    interval: 15,
-  });
   const [serviceToDelete, setServiceToDelete] = useState<any>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      toast.success("Welcome to Pro!", {
+        description:
+          "Your plan has been upgraded successfully. Enjoy all Pro features!",
+        duration: 3000,
+      });
+      const timeout = setTimeout(() => {
+        router.replace("/dashboard");
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [searchParams, router]);
+
+  if (!isLoaded) return <Loading />;
+  if (!isSignedIn) return <Unauthorized />;
+
+  const handleAddService = async (formData: {
+    name: string;
+    url: string;
+    interval: number;
+  }) => {
     try {
       await createService({
         name: formData.name,
@@ -69,13 +67,8 @@ export default function DashboardPage() {
         interval: formData.interval,
         isActive: true,
       });
-      setShowAddModal(false);
-      setFormData({ name: "", url: "", interval: 15 });
     } catch (error) {
-      console.error(error);
-      alert("Failed to create service. Please check your plan limits.");
-    } finally {
-      setIsSubmitting(false);
+      throw error;
     }
   };
 
@@ -84,9 +77,7 @@ export default function DashboardPage() {
     try {
       await deleteService({ id: serviceToDelete });
       setServiceToDelete(null);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
 
   const formatLastPing = (timestamp?: number) => {
@@ -115,7 +106,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-black text-white flex flex-col">
       <Navbar />
 
-      <main className="flex-1 mx-auto max-w-6xl w-full px-6 pt-32 pb-16">
+      <main className="flex-1 mx-auto max-w-6xl w-full px-6 pt-24 md:pt-32 pb-16">
         <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
           <div className="space-y-2">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
@@ -142,58 +133,31 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-12">
-          <div className="group rounded-3xl border border-white/5 bg-zinc-900/40 p-8 backdrop-blur-xl transition-all hover:bg-zinc-900/60 hover:border-emerald-500/30">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
-                <Globe className="h-5 w-5" />
-              </div>
-              <Badge variant="outline" className="border-white/5 text-zinc-500">
-                Total
-              </Badge>
-            </div>
-            <h2 className="text-sm font-medium text-zinc-400 mb-1 uppercase tracking-wider">
-              Total Services
-            </h2>
-            <p className="text-4xl font-black text-white tracking-tight">
-              {stats?.totalServices || 0}
-            </p>
-          </div>
-
-          <div className="group rounded-3xl border border-white/5 bg-zinc-900/40 p-8 backdrop-blur-xl transition-all hover:bg-zinc-900/60 hover:border-yellow-500/30">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 group-hover:scale-110 transition-transform">
-                <Activity className="h-5 w-5" />
-              </div>
-              <Badge variant="outline" className="border-white/5 text-zinc-500">
-                Active
-              </Badge>
-            </div>
-            <h2 className="text-sm font-medium text-zinc-400 mb-1 uppercase tracking-wider">
-              Active Pings
-            </h2>
-            <p className="text-4xl font-black text-white tracking-tight">
-              {stats?.activeServices || 0}
-            </p>
-          </div>
-
-          <div className="group rounded-3xl border border-white/5 bg-zinc-900/40 p-8 backdrop-blur-xl transition-all hover:bg-zinc-900/60 hover:border-blue-500/30">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <Badge variant="outline" className="border-white/5 text-zinc-500">
-                Healthy
-              </Badge>
-            </div>
-            <h2 className="text-sm font-medium text-zinc-400 mb-1 uppercase tracking-wider">
-              Uptime Score
-            </h2>
-            <p className="text-4xl font-black text-white tracking-tight">
-              {stats?.totalServices && stats.totalServices > 0
+          <StatsCard
+            title="Total Services"
+            value={stats?.totalServices || 0}
+            icon={<Globe className="h-5 w-5" />}
+            badge="Total"
+            color="emerald"
+          />
+          <StatsCard
+            title="Active Pings"
+            value={stats?.activeServices || 0}
+            icon={<Activity className="h-5 w-5" />}
+            badge="Active"
+            color="yellow"
+          />
+          <StatsCard
+            title="Uptime Score"
+            value={
+              stats?.totalServices && stats.totalServices > 0
                 ? `${Math.round((stats.activeServices / stats.totalServices) * 100)}%`
-                : "—"}
-            </p>
-          </div>
+                : "—"
+            }
+            icon={<ShieldCheck className="h-5 w-5" />}
+            badge="Healthy"
+            color="blue"
+          />
         </div>
 
         <div className="space-y-6">
@@ -253,7 +217,7 @@ export default function DashboardPage() {
               <h3 className="text-xl font-bold text-white mb-2">
                 No services yet
               </h3>
-              <p className="text-zinc-500 max-w-sm mb-8">
+              <p className="text-zinc-500 max-w-sm mb-8 px-4">
                 Start by adding your first backend endpoint to prevent it from
                 going to sleep.
               </p>
@@ -268,237 +232,39 @@ export default function DashboardPage() {
           ) : (
             <div className="grid gap-4">
               {services.map((service) => (
-                <div
+                <ServiceCard
                   key={service._id}
-                  className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-white/5 bg-zinc-900/40 p-6 transition-all hover:bg-zinc-900/60 hover:border-white/10"
-                >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className={`mt-1 h-3 w-3 shrink-0 rounded-full ${service.status === "online" ? "bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]" : "bg-red-500 shadow-[0_0_12px_rgba(239,68,68,0.5)]"}`}
-                    />
-                    <div className="space-y-1">
-                      <h3 className="font-bold text-white leading-none">
-                        {service.name}
-                      </h3>
-                      <div className="flex items-center gap-2 text-xs text-zinc-500">
-                        <span className="truncate max-w-[200px]">
-                          {service.url}
-                        </span>
-                        <a
-                          href={service.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-white"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-6 sm:gap-10">
-                    <div className="space-y-1">
-                      <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">
-                        Last Ping
-                      </p>
-                      <div className="flex flex-col gap-0.5">
-                        <div className="flex items-center gap-1.5 text-sm text-zinc-300">
-                          <Clock className="h-3.5 w-3.5 text-zinc-500" />
-                          {formatLastPing(service.lastPingedAt).relative}
-                        </div>
-                        {service.lastPingedAt && (
-                          <p className="text-[10px] text-zinc-600 font-medium ml-5">
-                            at {formatLastPing(service.lastPingedAt).exact}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-1">
-                      <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">
-                        Frequency
-                      </p>
-                      <div className="flex items-center gap-1.5 text-sm text-zinc-300">
-                        <Badge
-                          variant="outline"
-                          className="border-white/5 bg-white/5 text-zinc-400 text-[10px]"
-                        >
-                          Every {service.interval}m
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 ml-auto sm:ml-0">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setServiceToDelete(service._id)}
-                        className="h-10 w-10 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-all"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                  service={service}
+                  onDelete={setServiceToDelete}
+                  formatLastPing={formatLastPing}
+                />
               ))}
             </div>
           )}
         </div>
 
-        {showAddModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-in fade-in duration-300"
-              onClick={() => !isSubmitting && setShowAddModal(false)}
-            />
-            <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-zinc-950 p-1 shadow-2xl animate-in zoom-in-95 duration-300">
-              <div className="bg-zinc-900/50 p-8 rounded-2xl">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="space-y-1">
-                    <h2 className="text-2xl font-black text-white">
-                      Add Service
-                    </h2>
-                    <p className="text-sm text-zinc-500">
-                      Configure your backend wake-up call.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowAddModal(false)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-zinc-500 hover:bg-white/10 hover:text-white transition-all"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                </div>
+        <AddServiceModal
+          open={showAddModal}
+          onOpenChange={setShowAddModal}
+          onSubmit={handleAddService}
+        />
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-zinc-400 ml-1">
-                      Service Name
-                    </label>
-                    <input
-                      required
-                      placeholder="e.g. My Awesome API"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      className="w-full h-12 rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between ml-1">
-                      <label className="text-sm font-bold text-zinc-400">
-                        Endpoint URL
-                      </label>
-                      <div className="group relative">
-                        <Info className="h-3.5 w-3.5 text-zinc-500 cursor-help" />
-                        <div className="absolute bottom-full right-0 mb-2 w-64 p-3 rounded-xl bg-zinc-900 border border-white/10 text-[10px] text-zinc-400 opacity-0 group-hover:opacity-100 transition-all pointer-events-none shadow-2xl z-50">
-                          <p className="font-bold text-white mb-1">Pro Tip:</p>
-                          For better performance, use a lightweight health
-                          endpoint like{" "}
-                          <code className="text-emerald-400">/health</code>{" "}
-                          instead of your main landing page.
-                        </div>
-                      </div>
-                    </div>
-                    <input
-                      required
-                      type="url"
-                      placeholder="https://your-backend.render.com"
-                      value={formData.url}
-                      onChange={(e) =>
-                        setFormData({ ...formData, url: e.target.value })
-                      }
-                      className="w-full h-12 rounded-xl border border-white/5 bg-white/5 px-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-bold text-zinc-400 ml-1">
-                      Ping Interval
-                    </label>
-                    <Select
-                      value={formData.interval.toString()}
-                      onValueChange={(val) =>
-                        setFormData({ ...formData, interval: parseInt(val) })
-                      }
-                    >
-                      <SelectTrigger className="w-full h-12 rounded-xl border-white/5 bg-white/5 text-white focus:ring-emerald-500/50">
-                        <SelectValue placeholder="Select frequency" />
-                      </SelectTrigger>
-                      <SelectContent className="rounded-xl border-white/10 bg-zinc-900 text-white z-[200]">
-                        <SelectItem value="1">Every 1 Minute (Pro)</SelectItem>
-                        <SelectItem value="5">Every 5 Minutes (Pro)</SelectItem>
-                        <SelectItem value="15">
-                          Every 15 Minutes (Free)
-                        </SelectItem>
-                        <SelectItem value="30">
-                          Every 30 Minutes (Free)
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="pt-4">
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="group relative w-full h-14 overflow-hidden rounded-2xl bg-orange-600 px-8 font-black text-white transition-all duration-300 active:scale-[0.98] disabled:opacity-50"
-                    >
-                      <div className="relative z-10 flex items-center justify-center gap-2 tracking-tight">
-                        {isSubmitting ? (
-                          <>
-                            <RotateCw className="h-5 w-5 animate-spin" />
-                            <span>Igniting...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" />
-                            <span>Start Monitoring</span>
-                          </>
-                        )}
-                      </div>
-                      <div className="absolute inset-0 z-0 bg-gradient-to-tr from-orange-600 via-rose-500 to-amber-400 opacity-100 transition-transform duration-500 group-hover:scale-110" />
-                      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(0,0,0,0.2)_100%)] opacity-50" />
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
+        <DeleteServiceModal
+          isOpen={!!serviceToDelete}
+          onClose={() => setServiceToDelete(null)}
+          onConfirm={handleDelete}
+        />
       </main>
-
-      <AlertDialog
-        open={!!serviceToDelete}
-        onOpenChange={(open) => !open && setServiceToDelete(null)}
-      >
-        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
-              Are you absolutely sure?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 mb-4">
-              This action cannot be undone. This will permanently delete the
-              service and all its associated ping history.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all"
-            >
-              Delete Service
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <Footer />
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={null}>
+      <DashboardContent />
+    </Suspense>
   );
 }

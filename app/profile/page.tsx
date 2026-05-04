@@ -2,16 +2,23 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { User, Mail, Shield, Globe, Activity, Edit2 } from "lucide-react";
+import { Mail, Shield, Globe, Activity } from "lucide-react";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
+import Unauthorized from "@/components/shared/Unauthorized";
+import Loading from "@/app/loading";
 
 export default function ProfilePage() {
+  const { isLoaded, isSignedIn } = useUser();
   const user = useQuery(api.users.getMe);
   const stats = useQuery(api.services.getMyStats);
+
+  if (!isLoaded) return <Loading />;
+  if (!isSignedIn) return <Unauthorized />;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -20,16 +27,31 @@ export default function ProfilePage() {
       <main className="mx-auto max-w-4xl px-6 pt-32 pb-24">
         <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 p-8 backdrop-blur-xl sm:p-12">
           <div className="relative flex flex-col items-center gap-8 sm:flex-row sm:items-start">
-            <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-2xl border-4 border-white/10 shadow-2xl">
-              {user?.imageUrl ? (
-                <img
-                  src={user.imageUrl}
-                  alt={user.name || "User"}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-zinc-800 text-4xl font-bold">
-                  {user?.name?.[0] || "U"}
+            <div className="relative shrink-0">
+              <div
+                className={`relative h-32 w-32 rounded-2xl shadow-2xl ${
+                  user?.plan === "pro"
+                    ? "p-[3px] bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 animate-[gradientShift_3s_ease_infinite] bg-[length:200%_200%] shadow-emerald-500/30"
+                    : "border-4 border-white/10"
+                }`}
+              >
+                <div className="h-full w-full overflow-hidden rounded-[14px]">
+                  {user?.imageUrl ? (
+                    <img
+                      src={user.imageUrl}
+                      alt={user.name || "User"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-zinc-800 text-4xl font-bold">
+                      {user?.name?.[0] || "U"}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {user?.plan === "pro" && (
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-emerald-500 px-3 py-0.5 text-[10px] font-black text-white shadow-lg shadow-emerald-500/30 uppercase tracking-widest">
+                  ✦ Pro
                 </div>
               )}
             </div>
@@ -39,12 +61,18 @@ export default function ProfilePage() {
                 <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
                   {user?.name || "NoSnore User"}
                 </h1>
-                <Badge
-                  variant="outline"
-                  className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
-                >
-                  {user?.plan === "pro" ? "Pro" : "Free Plan"}
-                </Badge>
+                {user?.plan === "pro" ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500/20 to-emerald-500/20 border border-emerald-500/40 px-3 py-0.5 text-xs font-bold text-emerald-300 tracking-wide">
+                    ✦ PRO
+                  </span>
+                ) : (
+                  <Badge
+                    variant="outline"
+                    className="border-white/10 text-zinc-500"
+                  >
+                    Free
+                  </Badge>
+                )}
               </div>
 
               <p className="mb-6 flex items-center gap-2 text-zinc-400">

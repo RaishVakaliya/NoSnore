@@ -18,35 +18,19 @@ const features = [
   },
   {
     icon: Activity,
-    title: "Real-Time Status",
+    title: "Status Monitoring",
     description:
-      "Get live response-time graphs and status updates powered by Convex real-time subscriptions.",
+      "Track your service availability with instant Online/Offline indicators directly in your dashboard.",
     color: "text-indigo-400",
     bg: "bg-indigo-500/10",
   },
   {
-    icon: Bell,
-    title: "Downtime Alerts",
-    description:
-      "Receive immediate notifications when a service goes down, before your users even notice.",
-    color: "text-yellow-400",
-    bg: "bg-yellow-500/10",
-  },
-  {
     icon: Globe,
-    title: "Any Language, Any Stack",
+    title: "Any Stack, Any Language",
     description:
       "Works with any publicly accessible HTTP endpoint — Node.js, Python, Java, PHP, Ruby, Go.",
     color: "text-emerald-400",
     bg: "bg-emerald-500/10",
-  },
-  {
-    icon: Clock,
-    title: "Ping Log History",
-    description:
-      "Full audit trail of every ping — response code, latency, and timestamp — stored forever.",
-    color: "text-amber-400",
-    bg: "bg-amber-500/10",
   },
   {
     icon: ShieldCheck,

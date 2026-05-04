@@ -1,10 +1,10 @@
-import Navbar from "@/components/landing/Navbar";
+import Navbar from "@/components/shared/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import LanguageSupportSection from "@/components/landing/LanguageSupportSection";
 import CTASection from "@/components/landing/CTASection";
-import Footer from "@/components/landing/Footer";
+import Footer from "@/components/shared/Footer";
 
 export default function Home() {
   return (

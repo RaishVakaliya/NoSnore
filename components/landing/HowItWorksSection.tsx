@@ -10,16 +10,16 @@ const steps = [
   },
   {
     step: "02",
-    title: "Worker Daemon Pings It",
+    title: "Monitoring Engine Pings It",
     description:
-      "The NoSnore Node.js background worker checks every 10 seconds and sends a GET request to each due endpoint automatically.",
-    code: `[Worker] Scanning active services...\n[Worker] Pinging [My API] -> https://...\n[Worker] Responded with 200 in 342ms\n[Worker] Updated Convex state for [My API]`,
+      "NoSnore's background engine checks every active endpoint on schedule, sending a GET request automatically at your chosen interval.",
+    code: `[Monitor] Scanning active services...\n[Monitor] Pinging [My API] -> https://...\n[Monitor] Responded with 200 in 342ms\n[Monitor] Status updated for [My API]`,
   },
   {
     step: "03",
     title: "View Logs in Real-Time",
     description:
-      "Your dashboard shows live status, response time history, and full ping logs — all powered by Convex real-time subscriptions.",
+      "Your dashboard shows live status, response time history, and full ping logs — all updated in real time.",
     code: `Status:    ● UP\nLast Ping: 2 seconds ago\nResponse:  200 OK (342ms)\nLogs:      100 entries stored`,
   },
 ];

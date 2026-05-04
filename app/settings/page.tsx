@@ -2,10 +2,9 @@
 
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import Navbar from "@/components/landing/Navbar";
-import Footer from "@/components/landing/Footer";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useClerk, useUser } from "@clerk/nextjs";
 import {
   Settings,
@@ -14,27 +13,23 @@ import {
   LogOut,
   ShieldAlert,
   UserX,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
+  Plus,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Unauthorized from "@/components/shared/Unauthorized";
+import Loading from "@/app/loading";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  ServiceDeleteModal,
+  LogoutModal,
+  DeactivateModal,
+  DeleteAccountModal,
+} from "./SettingsModals";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { signOut } = useClerk();
-  const { user: clerkUser } = useUser();
+  const { isLoaded, isSignedIn, user: clerkUser } = useUser();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,36 +39,23 @@ export default function SettingsPage() {
   const user = useQuery(api.users.getMe);
   const services = useQuery(api.services.list);
 
-  const updateService = useMutation(api.services.updateService);
   const deleteService = useMutation(api.services.deleteService);
   const deactivateAccount = useMutation(api.users.deactivateAccount);
   const deleteAccount = useMutation(api.users.deleteAccount);
-
-  const handleToggleService = async (id: any, currentActive: boolean) => {
-    try {
-      await updateService({ id, isActive: !currentActive });
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handleDeleteService = async () => {
     if (!serviceToDelete) return;
     try {
       await deleteService({ id: serviceToDelete });
       setServiceToDelete(null);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
 
   const handleDeactivateAccount = async () => {
     try {
       await deactivateAccount();
       setShowDeactivateModal(false);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   };
 
   const handleDeleteAccount = async () => {
@@ -89,10 +71,12 @@ export default function SettingsPage() {
       setShowDeleteModal(false);
       router.push("/");
     } catch (error) {
-      console.error(error);
       setIsDeleting(false);
     }
   };
+
+  if (!isLoaded) return <Loading />;
+  if (!isSignedIn) return <Unauthorized />;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -119,9 +103,18 @@ export default function SettingsPage() {
             </h2>
 
             <div className="space-y-4">
-              {services?.length === 0 && (
-                <div className="py-10 text-center text-zinc-500 border border-dashed border-white/10 rounded-2xl">
-                  No services found. Add some in the dashboard.
+              {services && services.length === 0 && (
+                <div className="py-10 px-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center sm:text-left text-zinc-500 border border-dashed border-white/10 rounded-2xl">
+                  <p className="flex-1">
+                    No services found. Add some in the dashboard.
+                  </p>
+                  <Button
+                    onClick={() => router.push("/dashboard")}
+                    className="rounded-xl bg-white text-black font-bold hover:bg-zinc-200 h-10 px-4 transition-all"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Services
+                  </Button>
                 </div>
               )}
               {services?.map((service) => (
@@ -137,25 +130,6 @@ export default function SettingsPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        handleToggleService(service._id, service.isActive)
-                      }
-                      className={`h-9 rounded-xl border-white/10 text-xs font-semibold transition-all ${
-                        service.isActive
-                          ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
-                          : "bg-white/5 text-zinc-400 hover:bg-white/10"
-                      }`}
-                    >
-                      {service.isActive ? (
-                        <CheckCircle2 className="mr-2 h-3.5 w-3.5" />
-                      ) : (
-                        <XCircle className="mr-2 h-3.5 w-3.5" />
-                      )}
-                      {service.isActive ? "Active" : "Paused"}
-                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -234,126 +208,31 @@ export default function SettingsPage() {
         </div>
       </main>
 
-      <AlertDialog
-        open={!!serviceToDelete}
-        onOpenChange={(open) => !open && setServiceToDelete(null)}
-      >
-        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
-              Delete Service?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 mb-4">
-              Are you sure you want to delete this service? This action cannot
-              be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteService}
-              className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ServiceDeleteModal
+        serviceId={serviceToDelete}
+        onClose={() => setServiceToDelete(null)}
+        onConfirm={handleDeleteService}
+      />
 
-      <AlertDialog open={showLogoutModal} onOpenChange={setShowLogoutModal}>
-        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
-          <AlertDialogHeader>
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-white">
-              <LogOut className="h-6 w-6" />
-            </div>
-            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
-              Sign Out
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 mb-8">
-              Are you sure you want to sign out? You will need to sign back in
-              to access your dashboard.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => signOut(() => router.push("/"))}
-              className="flex-1 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all"
-            >
-              Sign Out
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={setShowLogoutModal}
+        onConfirm={() => signOut(() => router.push("/"))}
+      />
 
-      <AlertDialog
-        open={showDeactivateModal}
-        onOpenChange={setShowDeactivateModal}
-      >
-        <AlertDialogContent className="rounded-3xl border-white/10 bg-zinc-950 p-8 shadow-2xl">
-          <AlertDialogHeader>
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-yellow-500/10 text-yellow-400">
-              <UserX className="h-6 w-6" />
-            </div>
-            <AlertDialogTitle className="text-2xl font-bold text-white mb-2">
-              {user?.isActive ? "Deactivate" : "Reactivate"} Account
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 mb-8">
-              {user?.isActive
-                ? "This will pause all monitoring services. You can reactivate anytime."
-                : "This will resume all your monitoring services."}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeactivateAccount}
-              className="flex-1 rounded-xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 transition-all"
-            >
-              Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeactivateModal
+        isOpen={showDeactivateModal}
+        onClose={setShowDeactivateModal}
+        onConfirm={handleDeactivateAccount}
+        isActive={user?.isActive ?? true}
+      />
 
-      <AlertDialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
-        <AlertDialogContent className="rounded-3xl border-red-500/20 bg-zinc-950 p-8 shadow-2xl">
-          <AlertDialogHeader>
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
-              <AlertTriangle className="h-6 w-6" />
-            </div>
-            <AlertDialogTitle className="text-2xl font-bold text-white mb-2 tracking-tight">
-              Delete Account
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-zinc-400 mb-8 leading-relaxed">
-              This action is{" "}
-              <span className="text-red-400 font-bold underline underline-offset-4">
-                irreversible
-              </span>
-              . All your services, logs, and monitoring data will be permanently
-              deleted from NoSnore and your Clerk account.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-            <AlertDialogCancel className="flex-1 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteAccount}
-              disabled={isDeleting}
-              className="flex-1 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 transition-all"
-            >
-              {isDeleting ? "Deleting..." : "Yes, Delete Everything"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={setShowDeleteModal}
+        onConfirm={handleDeleteAccount}
+        isDeleting={isDeleting}
+      />
 
       <Footer />
     </div>

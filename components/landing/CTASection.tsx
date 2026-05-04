@@ -26,7 +26,7 @@ export default function CTASection() {
           <Link href="/dashboard">
             <Button
               size="lg"
-              className="gap-2 bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl shadow-white/10 transition-all hover:-translate-y-0.5 hover:shadow-emerald-500/20"
+              className="gap-2 bg-emerald-600 cursor-pointer hover:bg-emerald-500 text-white"
             >
               Start Monitoring — It&apos;s Free
               <ArrowRight className="h-4 w-4" />
@@ -40,7 +40,7 @@ export default function CTASection() {
             <Button
               size="lg"
               variant="outline"
-              className="border-white/10 bg-white/5 text-white hover:bg-white/10"
+              className="border-white/10 bg-white/5 text-white cursor-pointer"
             >
               Self-host on GitHub
             </Button>
