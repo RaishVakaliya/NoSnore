@@ -144,7 +144,7 @@ function DashboardContent() {
             value={stats?.totalServices ?? 0}
             icon={<Globe className="h-5 w-5" />}
             badge="Total"
-            color="emerald"
+            color="blue"
             loading={stats === undefined}
           />
           <StatsCard
@@ -159,12 +159,12 @@ function DashboardContent() {
             title="Uptime Score"
             value={
               stats?.pinnedServices && stats.pinnedServices > 0
-                ? `${Math.round((( stats.onlineServices ?? 0) / stats.pinnedServices) * 100)}%`
+                ? `${Math.round(((stats.onlineServices ?? 0) / stats.pinnedServices) * 100)}%`
                 : "—"
             }
             icon={<ShieldCheck className="h-5 w-5" />}
             badge="Healthy"
-            color="blue"
+            color="emerald"
             loading={stats === undefined}
           />
         </div>

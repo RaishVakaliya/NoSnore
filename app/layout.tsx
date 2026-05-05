@@ -16,10 +16,48 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteConfig = {
+  name: "NoSnore",
+  description: "Keep your backend alive while you sleep. NoSnore pings your services to prevent cold starts and ensures 24/7 availability.",
+  url: "https://no-snore.vercel.app",
+};
+
 export const metadata: Metadata = {
-  title: "NoSnore — Keep Your Backend Alive",
-  description:
-    "NoSnore is an uptime monitoring and backend wake-up service. Register your endpoints and let NoSnore ping them on a schedule to prevent cold starts.",
+  title: {
+    default: `${siteConfig.name} — Keep Your Backend Alive`,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: [
+    "NoSnore",
+    "Uptime Monitoring",
+    "Cold Start Prevention",
+    "Backend Pinger",
+    "SaaS Monitoring",
+    "Developer Tools",
+  ],
+  authors: [
+    {
+      name: "NoSnore Team",
+      url: siteConfig.url,
+    },
+  ],
+  creator: "NoSnore",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    creator: "@nosnore",
+  },
+  metadataBase: new URL(siteConfig.url),
 };
 
 import { Toaster } from "@/components/ui/sonner";

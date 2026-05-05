@@ -173,7 +173,7 @@ export default function PricingPage() {
                 <SignUpButton mode="modal">
                   <Button
                     variant="outline"
-                    className="w-full rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-white/10 transition-all"
+                    className="w-full rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-white/60 transition-all"
                   >
                     Get started for free
                   </Button>
@@ -191,11 +191,13 @@ export default function PricingPage() {
             </div>
           </div>
 
-          <div className="relative flex flex-col rounded-3xl border border-emerald-500/30 bg-zinc-900 shadow-2xl scale-105 z-10 p-10 text-left transition-all duration-300">
+          <div className="relative flex flex-col rounded-3xl border border-amber-500/30 bg-zinc-900 shadow-2xl scale-105 z-10 p-10 text-left transition-all duration-300">
             <div className="flex justify-between items-start">
-              <h2 className="text-2xl font-bold text-white">Pro</h2>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-200 bg-clip-text text-transparent animate-pulse">
+                Pro
+              </h2>
               {isPro && (
-                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold text-emerald-400 uppercase tracking-widest border border-emerald-500/20">
+                <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[10px] font-bold text-amber-400 uppercase tracking-widest border border-amber-500/20">
                   Current
                 </span>
               )}
@@ -221,7 +223,7 @@ export default function PricingPage() {
                   className="flex items-start gap-3 text-sm text-zinc-300"
                 >
                   <Check
-                    className="h-5 w-5 shrink-0 text-emerald-400"
+                    className="h-5 w-5 shrink-0 text-amber-400"
                     strokeWidth={3}
                   />
                   <span>{feature}</span>
@@ -232,7 +234,7 @@ export default function PricingPage() {
             <div className="mt-10">
               <Unauthenticated>
                 <SignUpButton mode="modal">
-                  <Button className="w-full rounded-xl py-6 text-base font-semibold text-white transition-all shadow-lg bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/10">
+                  <Button className="w-full rounded-xl py-6 text-base font-semibold text-white transition-all shadow-lg bg-amber-600 hover:bg-amber-500 shadow-amber-500/10">
                     Get started
                   </Button>
                 </SignUpButton>
@@ -244,7 +246,7 @@ export default function PricingPage() {
                   className={`w-full rounded-xl py-6 text-base font-semibold text-white transition-all shadow-lg ${
                     isPro
                       ? "bg-zinc-800 text-zinc-400 border-zinc-700 shadow-none cursor-default"
-                      : "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/10"
+                      : "bg-amber-600 hover:bg-amber-500 shadow-amber-500/10"
                   }`}
                 >
                   {loading

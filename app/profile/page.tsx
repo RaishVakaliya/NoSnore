@@ -32,7 +32,7 @@ export default function ProfilePage() {
               <div
                 className={`relative h-32 w-32 rounded-2xl shadow-2xl ${
                   user?.plan === "pro"
-                    ? "p-[3px] bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-400 animate-[gradientShift_3s_ease_infinite] bg-[length:200%_200%] shadow-emerald-500/30"
+                    ? "p-[3px] bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 animate-[gradientShift_3s_ease_infinite] bg-[length:200%_200%] shadow-amber-500/30"
                     : "border-4 border-white/10"
                 }`}
               >
@@ -51,7 +51,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               {user?.plan === "pro" && (
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500 to-emerald-500 px-3 py-0.5 text-[10px] font-black text-white shadow-lg shadow-emerald-500/30 uppercase tracking-widest">
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 px-3 py-0.5 text-[10px] font-black text-white shadow-lg shadow-amber-500/30 uppercase tracking-widest">
                   ✦ Pro
                 </div>
               )}
@@ -63,7 +63,7 @@ export default function ProfilePage() {
                   {user?.name || "NoSnore User"}
                 </h1>
                 {user?.plan === "pro" ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-blue-500/20 to-emerald-500/20 border border-emerald-500/40 px-3 py-0.5 text-xs font-bold text-emerald-300 tracking-wide">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 px-3 py-0.5 text-xs font-bold text-amber-300 tracking-wide">
                     ✦ PRO
                   </span>
                 ) : (
@@ -96,29 +96,46 @@ export default function ProfilePage() {
         </div>
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
-          <Link href="/pricing" className="block group">
-            <div className="h-full rounded-3xl border border-white/5 bg-zinc-900/40 p-8 transition-all hover:bg-zinc-900/60 hover:border-emerald-500/30">
+          {user?.plan === "pro" ? (
+            <div className="h-full rounded-3xl border border-amber-500/20 bg-zinc-900/40 p-8 transition-all">
               <div className="mb-6 flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 group-hover:bg-emerald-500/10 group-hover:text-emerald-400 transition-colors">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
                   <Shield className="h-5 w-5" />
                 </div>
-                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider group-hover:text-emerald-500/50 transition-colors">
+                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
                   Current Plan
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
-                {user?.plan === "pro" ? "Enterprise Pro" : "Personal Free"}
+              <h3 className="text-xl font-bold text-white mb-1">
+                Enterprise Pro
               </h3>
-              <p className="text-sm text-zinc-400 mb-6">
-                {user?.plan === "pro"
-                  ? "Up to 10 endpoints and 1-min intervals enabled."
-                  : "Limited to 2 endpoints and 15-min intervals."}
+              <p className="text-sm text-zinc-400">
+                Up to 10 endpoints and 1-min intervals enabled.
               </p>
-              <div className="inline-flex items-center text-emerald-400 hover:text-emerald-300 text-sm font-semibold">
-                Upgrade your plan →
-              </div>
             </div>
-          </Link>
+          ) : (
+            <Link href="/pricing" className="block group">
+              <div className="h-full rounded-3xl border border-white/5 bg-zinc-900/40 p-8 transition-all hover:bg-zinc-900/60 hover:border-emerald-500/30">
+                <div className="mb-6 flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 group-hover:bg-emerald-500/10 group-hover:text-emerald-400 transition-colors">
+                    <Shield className="h-5 w-5" />
+                  </div>
+                  <span className="text-xs font-medium text-zinc-500 uppercase tracking-wider group-hover:text-emerald-500/50 transition-colors">
+                    Current Plan
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-emerald-400 transition-colors">
+                  Personal Free
+                </h3>
+                <p className="text-sm text-zinc-400 mb-6">
+                  Limited to 2 endpoints and 15-min intervals.
+                </p>
+                <div className="inline-flex items-center text-amber-400 hover:text-amber-300 text-sm font-semibold">
+                  Upgrade your plan →
+                </div>
+              </div>
+            </Link>
+          )}
 
           <div className="rounded-3xl border border-white/5 bg-zinc-900/40 p-8 transition-colors hover:bg-zinc-900/60">
             <div className="mb-6 flex items-center justify-between">
