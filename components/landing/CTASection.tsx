@@ -32,19 +32,6 @@ export default function CTASection() {
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white/10 bg-white/5 text-white cursor-pointer"
-            >
-              Self-host on GitHub
-            </Button>
-          </a>
         </div>
       </div>
     </section>

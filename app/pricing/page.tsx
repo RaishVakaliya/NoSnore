@@ -39,8 +39,8 @@ export default function PricingPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
         currency: order.currency,
-        name: "NoSnore Pro (Test)",
-        description: "Test Transaction - ₹5",
+        name: "NoSnore Pro",
+        description: "Pro Plan — ₹99/month",
         order_id: order.id,
         handler: async function (response: any) {
           try {
@@ -141,7 +141,7 @@ export default function PricingPage() {
               <h2 className="text-2xl font-bold text-white">Free Plan</h2>
             </div>
             <div className="mt-4 flex items-baseline gap-1">
-              <span className="text-5xl font-black text-white">$0</span>
+              <span className="text-5xl font-black text-white">₹0</span>
             </div>
             <p className="mt-4 text-sm text-zinc-500 leading-relaxed">
               Recommended for developers starting out with their first side
@@ -153,7 +153,7 @@ export default function PricingPage() {
                 "Access to basic monitoring tools",
                 "15-minute ping intervals",
                 "Up to 2 active endpoints",
-                "Public uptime dashboards",
+                "Basic uptime dashboard",
               ].map((feature) => (
                 <li
                   key={feature}
@@ -183,7 +183,7 @@ export default function PricingPage() {
                 <Button
                   variant="outline"
                   onClick={() => router.push("/dashboard")}
-                  className="w-full rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-white/10 transition-all"
+                  className="w-full rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-white/60 transition-all"
                 >
                   Go to Dashboard
                 </Button>
@@ -201,7 +201,7 @@ export default function PricingPage() {
               )}
             </div>
             <div className="mt-4 flex items-baseline gap-1">
-              <span className="text-5xl font-black text-white">$10</span>
+              <span className="text-5xl font-black text-white">₹99</span>
               <span className="text-sm font-medium text-zinc-500">/month</span>
             </div>
             <p className="mt-4 text-sm text-zinc-400 leading-relaxed">
@@ -211,10 +211,10 @@ export default function PricingPage() {
 
             <ul className="mt-10 space-y-4 flex-1">
               {[
-                "Dedicated uptime manager",
                 "1-minute real-time pinging",
-                "Unlimited endpoint monitoring",
-                "Private status pages with custom branding",
+                "Up to 10 active endpoints",
+                "Ping history & logs access",
+                "Priority support",
               ].map((feature) => (
                 <li
                   key={feature}

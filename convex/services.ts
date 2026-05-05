@@ -18,18 +18,28 @@ export const create = mutation({
       .unique();
 
     if (!user) throw new Error("User not found in database");
-    
+
     const existingServices = await ctx.db
       .query("services")
       .withIndex("by_userId", (q) => q.eq("userId", user._id))
       .collect();
 
     if (existingServices.length >= 2 && user.plan !== "pro") {
-      throw new ConvexError("Free users are limited to 2 services. Please upgrade to Pro.");
+      throw new ConvexError(
+        "Free users are limited to 2 services. Please upgrade to Pro.",
+      );
+    }
+
+    if (existingServices.length >= 10 && user.plan === "pro") {
+      throw new ConvexError(
+        "Pro users are limited to 10 services. Please contact support for more.",
+      );
     }
 
     if ((args.interval === 1 || args.interval === 5) && user.plan !== "pro") {
-      throw new ConvexError("1 and 5 minute intervals are Pro features. Please upgrade to Pro.");
+      throw new ConvexError(
+        "1 and 5 minute intervals are Pro features. Please upgrade to Pro.",
+      );
     }
 
     const serviceId = await ctx.db.insert("services", {
@@ -104,6 +114,8 @@ export const getMyStats = query({
     return {
       totalServices: services.length,
       activeServices: services.filter((s) => s.isActive).length,
+      onlineServices: services.filter((s) => s.status === "online").length,
+      pinnedServices: services.filter((s) => s.lastPingedAt).length,
     };
   },
 });

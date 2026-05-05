@@ -37,6 +37,7 @@ function DashboardContent() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState<any>(null);
+  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
@@ -59,16 +60,15 @@ function DashboardContent() {
     url: string;
     interval: number;
   }) => {
-    try {
-      await createService({
-        name: formData.name,
-        url: formData.url,
-        interval: formData.interval,
-        isActive: true,
-      });
-    } catch (error) {
-      throw error;
-    }
+    await createService({
+      name: formData.name,
+      url: formData.url,
+      interval: formData.interval,
+      isActive: true,
+    });
+    toast.success("Service added!", {
+      description: `"${formData.name}" is now being monitored.`,
+    });
   };
 
   const handleDelete = async () => {
@@ -76,7 +76,14 @@ function DashboardContent() {
     try {
       await deleteService({ id: serviceToDelete });
       setServiceToDelete(null);
-    } catch (error) {}
+      toast.success("Service removed", {
+        description: "The endpoint has been deleted and will no longer be pinged.",
+      });
+    } catch (err: any) {
+      toast.error("Failed to delete service", {
+        description: err?.message || "Please try again.",
+      });
+    }
   };
 
   const formatLastPing = (timestamp?: number) => {
@@ -134,28 +141,31 @@ function DashboardContent() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-12">
           <StatsCard
             title="Total Services"
-            value={stats?.totalServices || 0}
+            value={stats?.totalServices ?? 0}
             icon={<Globe className="h-5 w-5" />}
             badge="Total"
             color="emerald"
+            loading={stats === undefined}
           />
           <StatsCard
             title="Active Pings"
-            value={stats?.activeServices || 0}
+            value={stats?.activeServices ?? 0}
             icon={<Activity className="h-5 w-5" />}
             badge="Active"
             color="yellow"
+            loading={stats === undefined}
           />
           <StatsCard
             title="Uptime Score"
             value={
-              stats?.totalServices && stats.totalServices > 0
-                ? `${Math.round((stats.activeServices / stats.totalServices) * 100)}%`
+              stats?.pinnedServices && stats.pinnedServices > 0
+                ? `${Math.round((( stats.onlineServices ?? 0) / stats.pinnedServices) * 100)}%`
                 : "—"
             }
             icon={<ShieldCheck className="h-5 w-5" />}
             badge="Healthy"
             color="blue"
+            loading={stats === undefined}
           />
         </div>
 
@@ -169,14 +179,17 @@ function DashboardContent() {
               size="sm"
               onClick={() => {
                 setIsRefreshing(true);
-                setTimeout(() => setIsRefreshing(false), 1000);
+                setLastRefreshed(new Date());
+                setTimeout(() => setIsRefreshing(false), 800);
               }}
               className="h-8 rounded-lg border border-white/5 bg-white/5 px-3 text-xs font-bold text-zinc-400 hover:bg-white/10 hover:text-white transition-all"
             >
               <RotateCw
                 className={`mr-2 h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`}
               />
-              {isRefreshing ? "Refreshing..." : "Refresh Data"}
+              {isRefreshing
+                ? "Syncing..."
+                : `Synced ${lastRefreshed.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
             </Button>
           </div>
 

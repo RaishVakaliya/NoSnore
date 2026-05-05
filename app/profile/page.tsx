@@ -19,6 +19,7 @@ export default function ProfilePage() {
 
   if (!isLoaded) return <Loading />;
   if (!isSignedIn) return <Unauthorized />;
+  const maxServices = user?.plan === "pro" ? 10 : 2;
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -110,8 +111,8 @@ export default function ProfilePage() {
               </h3>
               <p className="text-sm text-zinc-400 mb-6">
                 {user?.plan === "pro"
-                  ? "Unlimited endpoints and 1-min intervals enabled."
-                  : "Limited to 3 endpoints and 15-min intervals."}
+                  ? "Up to 10 endpoints and 1-min intervals enabled."
+                  : "Limited to 2 endpoints and 15-min intervals."}
               </p>
               <div className="inline-flex items-center text-emerald-400 hover:text-emerald-300 text-sm font-semibold">
                 Upgrade your plan →
@@ -144,7 +145,7 @@ export default function ProfilePage() {
               <div
                 className="h-full bg-emerald-500 transition-all duration-500"
                 style={{
-                  width: `${Math.min(((stats?.totalServices || 0) / 10) * 100, 100)}%`,
+                  width: `${Math.min(((stats?.totalServices || 0) / maxServices) * 100, 100)}%`,
                 }}
               />
             </div>

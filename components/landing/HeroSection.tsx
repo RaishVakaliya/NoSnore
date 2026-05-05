@@ -58,19 +58,6 @@ export default function HeroSection() {
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
-          <a
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button
-              size="lg"
-              variant="outline"
-              className="gap-2 border-white/10 bg-white/5 text-white cursor-pointer"
-            >
-              View on GitHub
-            </Button>
-          </a>
         </div>
 
         <div className="mt-6 flex flex-wrap justify-center gap-8 text-sm text-zinc-500">
