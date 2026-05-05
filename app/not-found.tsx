@@ -37,7 +37,7 @@ export default function NotFound() {
                 <Link href="/dashboard">
                   <Button
                     variant="outline"
-                    className="h-12 px-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+                    className="h-12 px-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 hover:text-white/60 transition-all"
                   >
                     <MoveLeft className="mr-2 h-4 w-4" />
                     Go to Dashboard

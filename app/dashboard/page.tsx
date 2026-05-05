@@ -40,17 +40,16 @@ function DashboardContent() {
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, "", newUrl);
+
       toast.success("Welcome to Pro!", {
         description:
           "Your plan has been upgraded successfully. Enjoy all Pro features!",
         duration: 3000,
       });
-      const timeout = setTimeout(() => {
-        router.replace("/dashboard");
-      }, 100);
-      return () => clearTimeout(timeout);
     }
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   if (!isLoaded) return <Loading />;
   if (!isSignedIn) return <Unauthorized />;

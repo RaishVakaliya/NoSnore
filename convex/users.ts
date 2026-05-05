@@ -91,36 +91,11 @@ export const updateSubscription = mutation({
   args: {
     clerkId: v.string(),
     plan: v.string(),
-    stripeCustomerId: v.optional(v.string()),
-    subscriptionId: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", args.clerkId))
-      .unique();
-
-    if (!user) throw new Error("User not found");
-
-    await ctx.db.patch(user._id, {
-      plan: args.plan,
-      stripeCustomerId: args.stripeCustomerId,
-      subscriptionId: args.subscriptionId,
-    });
-  },
-});
-
-export const updateSubscriptionByStripeId = mutation({
-  args: {
-    stripeCustomerId: v.string(),
-    plan: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_stripeCustomerId", (q) =>
-        q.eq("stripeCustomerId", args.stripeCustomerId)
-      )
       .unique();
 
     if (!user) throw new Error("User not found");
