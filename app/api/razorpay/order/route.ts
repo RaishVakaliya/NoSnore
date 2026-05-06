@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     const { userId } = await auth();
     if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
-    const amount = 9900;
+    const amount = 100;
 
     if (amount < 100) {
       return NextResponse.json(

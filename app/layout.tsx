@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ConvexClientProvider } from "@/components/providers/ConvexClientProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -18,7 +20,8 @@ const geistMono = Geist_Mono({
 
 const siteConfig = {
   name: "NoSnore",
-  description: "Keep your backend alive while you sleep. NoSnore pings your services to prevent cold starts and ensures 24/7 availability.",
+  description:
+    "Keep your backend alive while you sleep. NoSnore pings your services to prevent cold starts and ensures 24/7 availability.",
   url: "https://no-snore.vercel.app",
 };
 
@@ -70,11 +73,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        inter.variable,
+      )}
     >
       <body className="min-h-full flex flex-col">
         <ConvexClientProvider>
           {children}
+          <SpeedInsights />
+          <Analytics />
           <Toaster />
         </ConvexClientProvider>
       </body>
