@@ -23,10 +23,7 @@ export default function DeleteServiceModal({
   onConfirm,
 }: DeleteServiceModalProps) {
   return (
-    <AlertDialog
-      open={isOpen}
-      onOpenChange={(open) => !open && onClose()}
-    >
+    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="w-[95vw] max-w-lg rounded-3xl border border-white/10 bg-zinc-950 p-6 md:p-8 shadow-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl md:text-2xl font-bold text-white mb-2">
@@ -38,15 +35,15 @@ export default function DeleteServiceModal({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-          <AlertDialogCancel 
+          <AlertDialogCancel
             onClick={onClose}
-            className="flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60"
+            className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60"
           >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="flex-1 h-11 md:h-12 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all border-0"
+            className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all border-0"
           >
             Delete Service
           </AlertDialogAction>

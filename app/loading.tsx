@@ -6,9 +6,7 @@ export default function Loading() {
       </div>
 
       <div className="relative flex flex-col items-center gap-6">
-        <div className="relative h-20 w-20 overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/50 p-4 backdrop-blur-xl">
-          <div className="absolute inset-0 bg-emerald-500/20 blur-xl animate-pulse" />
-
+        <div className="relative h-18 w-24 overflow-hidden rounded-3xl border border-white/10 bg-zinc-900/50 p-4 backdrop-blur-xl">
           <video
             src="/app_logo_video.webm"
             autoPlay

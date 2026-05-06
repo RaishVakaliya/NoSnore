@@ -77,7 +77,8 @@ function DashboardContent() {
       await deleteService({ id: serviceToDelete });
       setServiceToDelete(null);
       toast.success("Service removed", {
-        description: "The endpoint has been deleted and will no longer be pinged.",
+        description:
+          "The endpoint has been deleted and will no longer be pinged.",
       });
     } catch (err: any) {
       toast.error("Failed to delete service", {
@@ -131,7 +132,7 @@ function DashboardContent() {
           </div>
           <Button
             onClick={() => setShowAddModal(true)}
-            className="rounded-xl bg-white text-black font-bold hover:bg-zinc-200 shadow-lg shadow-white/5 h-12 px-6 transition-all"
+            className="cursor-pointer rounded-xl bg-white text-black font-bold hover:bg-zinc-200 shadow-lg shadow-white/5 h-12 px-6 transition-all"
           >
             <Plus className="mr-2 h-5 w-5" />
             New Service
@@ -182,7 +183,7 @@ function DashboardContent() {
                 setLastRefreshed(new Date());
                 setTimeout(() => setIsRefreshing(false), 800);
               }}
-              className="h-8 rounded-lg border border-white/5 bg-white/5 px-3 text-xs font-bold text-zinc-400 hover:bg-white/10 hover:text-white transition-all"
+              className="cursor-pointer h-8 rounded-lg border border-white/5 bg-white/5 px-3 text-xs font-bold text-zinc-400 hover:bg-white/10 hover:text-white transition-all"
             >
               <RotateCw
                 className={`mr-2 h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`}
@@ -236,7 +237,7 @@ function DashboardContent() {
               <Button
                 onClick={() => setShowAddModal(true)}
                 variant="outline"
-                className="rounded-xl border-white/10 bg-white/5 hover:bg-white/60"
+                className="rounded-xl cursor-pointer border-white/10 bg-white/5 hover:bg-white/60"
               >
                 Add My First Service
               </Button>

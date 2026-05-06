@@ -176,7 +176,7 @@ export function ServiceCard({
           variant="ghost"
           size="icon"
           onClick={() => onDelete(service._id)}
-          className="h-10 w-10 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-all ml-auto sm:ml-0"
+          className="cursor-pointer h-10 w-10 rounded-xl text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-all ml-auto sm:ml-0"
         >
           <Trash2 className="h-4 w-4" />
         </Button>

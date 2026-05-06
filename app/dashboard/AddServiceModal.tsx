@@ -59,7 +59,10 @@ export default function AddServiceModal({
       onOpenChange(false);
     } catch (err: any) {
       // Check for ConvexError specifically
-      const errorMessage = err?.data || err?.message || "Please check your plan limits. You might need to upgrade to add more services.";
+      const errorMessage =
+        err?.data ||
+        err?.message ||
+        "Please check your plan limits. You might need to upgrade to add more services.";
       setError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -99,7 +102,9 @@ export default function AddServiceModal({
           >
             <AlertCircle className="h-4 w-4" />
             <AlertTitle className="font-bold">
-              {error.includes("limit") ? "Plan Limit Reached" : "Pro Feature Required"}
+              {error.includes("limit")
+                ? "Plan Limit Reached"
+                : "Pro Feature Required"}
             </AlertTitle>
             <AlertDescription className="text-xs opacity-80">
               {error}
@@ -187,7 +192,7 @@ export default function AddServiceModal({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="group w-full h-11 md:h-12 rounded-xl bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-400 hover:to-emerald-400 font-bold text-white border-0 transition-all disabled:opacity-50"
+              className="cursor-pointer group w-full h-11 md:h-12 rounded-xl bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-400 hover:to-emerald-400 font-bold text-white border-0 transition-all disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

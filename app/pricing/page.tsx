@@ -183,7 +183,7 @@ export default function PricingPage() {
                 <Button
                   variant="outline"
                   onClick={() => router.push("/dashboard")}
-                  className="w-full rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-white/60 transition-all"
+                  className="w-full cursor-pointer rounded-xl border-white/10 bg-white/5 py-6 text-base font-semibold text-white hover:bg-white/60 transition-all"
                 >
                   Go to Dashboard
                 </Button>
@@ -243,7 +243,7 @@ export default function PricingPage() {
                 <Button
                   onClick={handleProCheckout}
                   disabled={loading || isPro}
-                  className={`w-full rounded-xl py-6 text-base font-semibold text-white transition-all shadow-lg ${
+                  className={`w-full cursor-pointer rounded-xl py-6 text-base font-semibold text-white transition-all shadow-lg ${
                     isPro
                       ? "bg-zinc-800 text-zinc-400 border-zinc-700 shadow-none cursor-default"
                       : "bg-amber-600 hover:bg-amber-500 shadow-amber-500/10"

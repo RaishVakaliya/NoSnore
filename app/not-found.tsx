@@ -29,7 +29,7 @@ export default function NotFound() {
 
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link href="/">
-                  <Button className="h-12 px-8 rounded-full bg-white text-black font-bold hover:bg-zinc-200 transition-all">
+                  <Button className="cursor-pointer h-12 px-8 rounded-full bg-white text-black font-bold hover:bg-zinc-200 transition-all">
                     <Home className="mr-2 h-4 w-4" />
                     Back to Home
                   </Button>
@@ -37,7 +37,7 @@ export default function NotFound() {
                 <Link href="/dashboard">
                   <Button
                     variant="outline"
-                    className="h-12 px-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 hover:text-white/60 transition-all"
+                    className="h-12 cursor-pointer px-8 rounded-full border-white/10 bg-white/5 hover:bg-white/10 hover:text-white/60 transition-all"
                   >
                     <MoveLeft className="mr-2 h-4 w-4" />
                     Go to Dashboard

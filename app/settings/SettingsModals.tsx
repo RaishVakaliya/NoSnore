@@ -18,20 +18,21 @@ interface ServiceDeleteModalProps {
   onConfirm: () => void;
 }
 
-export function ServiceDeleteModal({ serviceId, onClose, onConfirm }: ServiceDeleteModalProps) {
+export function ServiceDeleteModal({
+  serviceId,
+  onClose,
+  onConfirm,
+}: ServiceDeleteModalProps) {
   return (
-    <AlertDialog
-      open={!!serviceId}
-      onOpenChange={(open) => !open && onClose()}
-    >
+    <AlertDialog open={!!serviceId} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="w-[95vw] max-w-lg rounded-3xl border border-white/10 bg-zinc-950 p-6 md:p-8 shadow-2xl">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl md:text-2xl font-bold text-white mb-2">
             Delete Service?
           </AlertDialogTitle>
           <AlertDialogDescription className="text-zinc-400 mb-4">
-            Are you sure you want to delete this service? This action cannot
-            be undone.
+            Are you sure you want to delete this service? This action cannot be
+            undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
@@ -68,17 +69,17 @@ export function LogoutModal({ isOpen, onClose, onConfirm }: LogoutModalProps) {
             Sign Out
           </AlertDialogTitle>
           <AlertDialogDescription className="text-zinc-400 mb-6 md:mb-8 text-sm md:text-base">
-            Are you sure you want to sign out? You will need to sign back in
-            to access your dashboard.
+            Are you sure you want to sign out? You will need to sign back in to
+            access your dashboard.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-          <AlertDialogCancel className="flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+          <AlertDialogCancel className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="flex-1 h-11 md:h-12 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all border-0"
+            className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all border-0"
           >
             Sign Out
           </AlertDialogAction>
@@ -95,12 +96,14 @@ interface DeactivateModalProps {
   isActive: boolean;
 }
 
-export function DeactivateModal({ isOpen, onClose, onConfirm, isActive }: DeactivateModalProps) {
+export function DeactivateModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  isActive,
+}: DeactivateModalProps) {
   return (
-    <AlertDialog
-      open={isOpen}
-      onOpenChange={onClose}
-    >
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent className="w-[95vw] max-w-lg rounded-3xl border border-white/10 bg-zinc-950 p-6 md:p-8 shadow-2xl">
         <AlertDialogHeader>
           <div className="mb-4 md:mb-6 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-2xl bg-yellow-500/10 text-yellow-400">
@@ -116,12 +119,12 @@ export function DeactivateModal({ isOpen, onClose, onConfirm, isActive }: Deacti
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-          <AlertDialogCancel className="flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+          <AlertDialogCancel className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="flex-1 h-11 md:h-12 rounded-xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 transition-all border-0"
+            className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl bg-yellow-500 text-white font-bold hover:bg-yellow-600 transition-all border-0"
           >
             Confirm
           </AlertDialogAction>
@@ -138,7 +141,12 @@ interface DeleteAccountModalProps {
   isDeleting: boolean;
 }
 
-export function DeleteAccountModal({ isOpen, onClose, onConfirm, isDeleting }: DeleteAccountModalProps) {
+export function DeleteAccountModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  isDeleting,
+}: DeleteAccountModalProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent className="w-[95vw] max-w-lg rounded-3xl border-red-500/20 bg-zinc-950 p-6 md:p-8 shadow-2xl">
@@ -159,13 +167,13 @@ export function DeleteAccountModal({ isOpen, onClose, onConfirm, isDeleting }: D
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-col sm:flex-row gap-3">
-          <AlertDialogCancel className="flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
+          <AlertDialogCancel className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl border-white/10 bg-white/5 text-white hover:bg-white/60">
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
-            className="flex-1 h-11 md:h-12 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 transition-all border-0"
+            className="cursor-pointer flex-1 h-11 md:h-12 rounded-xl bg-red-600 text-white font-bold hover:bg-red-700 transition-all border-0"
           >
             {isDeleting ? "Deleting..." : "Yes, Delete Everything"}
           </AlertDialogAction>

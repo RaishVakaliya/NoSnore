@@ -6,20 +6,60 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Shield, Globe, Activity } from "lucide-react";
+import { Mail, Shield, Globe, Activity, Camera, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
+import { useRef, useState } from "react";
 import Unauthorized from "@/components/shared/Unauthorized";
 import Loading from "@/app/loading";
 
 export default function ProfilePage() {
-  const { isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn, user: clerkUser } = useUser();
   const user = useQuery(api.users.getMe);
   const stats = useQuery(api.services.getMyStats);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   if (!isLoaded) return <Loading />;
   if (!isSignedIn) return <Unauthorized />;
+
   const maxServices = user?.plan === "pro" ? 10 : 2;
+  const isPro = user?.plan === "pro";
+
+  const handleImageClick = () => {
+    if (!isPro) {
+      toast.error("Pro Feature", {
+        description: "Please upgrade to Pro to change your profile picture.",
+      });
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File too large", {
+        description: "Image must be less than 5MB.",
+      });
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      await clerkUser?.setProfileImage({ file });
+      toast.success("Profile picture updated!");
+    } catch (error: any) {
+      toast.error("Failed to update picture", {
+        description: error.message || "An unexpected error occurred.",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -29,28 +69,51 @@ export default function ProfilePage() {
         <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-zinc-900/40 p-8 backdrop-blur-xl sm:p-12">
           <div className="relative flex flex-col items-center gap-8 sm:flex-row sm:items-start">
             <div className="relative shrink-0">
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
               <div
-                className={`relative h-32 w-32 rounded-2xl shadow-2xl ${
-                  user?.plan === "pro"
-                    ? "p-[3px] bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 animate-[gradientShift_3s_ease_infinite] bg-[length:200%_200%] shadow-amber-500/30"
+                onClick={handleImageClick}
+                className={`relative h-32 w-32 rounded-2xl shadow-2xl transition-all ${
+                  isPro
+                    ? "p-[3px] bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-400 animate-[gradientShift_3s_ease_infinite] bg-[length:200%_200%] shadow-amber-500/30 cursor-pointer group"
                     : "border-4 border-white/10"
                 }`}
               >
-                <div className="h-full w-full overflow-hidden rounded-[14px]">
+                <div className="h-full w-full overflow-hidden rounded-[14px] relative">
                   {user?.imageUrl ? (
                     <img
                       src={user.imageUrl}
                       alt={user.name || "User"}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition-transform group-hover:scale-110"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-zinc-800 text-4xl font-bold">
                       {user?.name?.[0] || "U"}
                     </div>
                   )}
+
+                  {isPro && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
+                      {isUploading ? (
+                        <Loader2 className="h-6 w-6 animate-spin text-amber-400" />
+                      ) : (
+                        <>
+                          <Camera className="h-6 w-6 text-amber-400 mb-1" />
+                          <span className="text-[10px] font-bold text-white uppercase tracking-wider">
+                            Change
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              {user?.plan === "pro" && (
+              {isPro && (
                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 px-3 py-0.5 text-[10px] font-black text-white shadow-lg shadow-amber-500/30 uppercase tracking-widest">
                   ✦ Pro
                 </div>
@@ -85,7 +148,7 @@ export default function ProfilePage() {
                 <Link href="/settings">
                   <Button
                     variant="outline"
-                    className="h-9 rounded-xl border-white/10 bg-white/5 text-xs font-semibold text-white transition-all"
+                    className="h-9 cursor-pointer rounded-xl border-white/10 bg-white/5 text-xs font-semibold text-white transition-all"
                   >
                     Account Settings
                   </Button>

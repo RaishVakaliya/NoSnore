@@ -110,7 +110,7 @@ export default function SettingsPage() {
                   </p>
                   <Button
                     onClick={() => router.push("/dashboard")}
-                    className="rounded-xl bg-white text-black font-bold hover:bg-zinc-200 h-10 px-4 transition-all"
+                    className="cursor-pointer rounded-xl bg-white text-black font-bold hover:bg-zinc-200 h-10 px-4 transition-all"
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Add Services
@@ -162,7 +162,7 @@ export default function SettingsPage() {
                 <Button
                   variant="outline"
                   onClick={() => setShowLogoutModal(true)}
-                  className="w-full rounded-xl border-white/10 bg-white/5 text-sm font-semibold text-white transition-all"
+                  className="w-full rounded-xl border-white/10 bg-white/5 text-sm font-semibold text-white transition-all cursor-pointer"
                 >
                   Logout
                 </Button>
@@ -181,7 +181,7 @@ export default function SettingsPage() {
                 <Button
                   variant="outline"
                   onClick={() => setShowDeactivateModal(true)}
-                  className="w-full rounded-xl border-yellow-500/20 bg-yellow-500/5 text-sm font-semibold text-yellow-400 hover:text-yellow-400  hover:border-yellow-500/20 transition-all"
+                  className="w-full rounded-xl border-yellow-500/20 bg-yellow-500/5 text-sm cursor-pointer font-semibold text-yellow-400 hover:text-yellow-400  hover:border-yellow-500/20 transition-all"
                 >
                   {user?.isActive ? "Deactivate Account" : "Reactivate Account"}
                 </Button>
@@ -198,7 +198,7 @@ export default function SettingsPage() {
                 <Button
                   variant="destructive"
                   onClick={() => setShowDeleteModal(true)}
-                  className="h-12 w-full rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-all"
+                  className="h-12 w-full rounded-xl bg-red-500 cursor-pointer text-white font-bold hover:bg-red-600 transition-all"
                 >
                   Delete Permanently
                 </Button>
