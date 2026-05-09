@@ -22,7 +22,7 @@ const siteConfig = {
   name: "NoSnore",
   description:
     "Keep your backend alive while you sleep. NoSnore pings your services to prevent cold starts and ensures 24/7 availability.",
-  url: "https://no-snore.vercel.app",
+  url: "https://nosnore.tech",
 };
 
 export const metadata: Metadata = {

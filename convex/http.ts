@@ -122,7 +122,7 @@ const handleClerkWebhook = httpAction(async (ctx, request) => {
       clerkId: data.id,
       email: email,
       name: name || undefined,
-      imageUrl: data.image_url || undefined,
+      imageUrl: data.image_url || data.profile_image_url || undefined,
     });
   }
 

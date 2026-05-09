@@ -58,7 +58,6 @@ export default function AddServiceModal({
       setFormData({ name: "", url: "", interval: 15 });
       onOpenChange(false);
     } catch (err: any) {
-      // Check for ConvexError specifically
       const errorMessage =
         err?.data ||
         err?.message ||

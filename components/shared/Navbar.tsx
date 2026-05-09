@@ -155,7 +155,7 @@ export default function Navbar() {
                   <div
                     className={`relative flex items-center justify-center rounded-full ${
                       user?.plan === "pro"
-                        ? "h-9 w-9 p-[1.5px] bg-gradient-to-r from-blue-400 to-emerald-400"
+                        ? "h-9 w-9 p-[1.5px] bg-gradient-to-r from-yellow-500 to-yellow-300"
                         : "h-8 w-8"
                     }`}
                   >

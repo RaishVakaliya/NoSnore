@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const { isLoaded, isSignedIn, user: clerkUser } = useUser();
   const user = useQuery(api.users.getMe);
   const stats = useQuery(api.services.getMyStats);
+  const updateProfileImage = useMutation(api.users.updateProfileImage);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -50,7 +51,14 @@ export default function ProfilePage() {
 
     try {
       setIsUploading(true);
-      await clerkUser?.setProfileImage({ file });
+      const result = await clerkUser?.setProfileImage({ file });
+
+      const newImageUrl = result?.publicUrl || clerkUser?.imageUrl;
+
+      if (newImageUrl) {
+        await updateProfileImage({ imageUrl: newImageUrl });
+      }
+
       toast.success("Profile picture updated!");
     } catch (error: any) {
       toast.error("Failed to update picture", {
