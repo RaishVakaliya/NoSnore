@@ -14,8 +14,8 @@ const links = {
     { label: "Changelog", href: "#" },
   ],
   Legal: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
   ],
 };
 
@@ -41,7 +41,7 @@ export default function Footer() {
                 />
               </span>
               <span className="text-lg font-bold text-white">
-                No<span className="text-emerald-400">Snore</span>
+                No<span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Snore</span>
               </span>
             </Link>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">
