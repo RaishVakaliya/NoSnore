@@ -41,7 +41,10 @@ export default function Footer() {
                 />
               </span>
               <span className="text-lg font-bold text-white">
-                No<span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">Snore</span>
+                No
+                <span className="bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+                  Snore
+                </span>
               </span>
             </Link>
             <p className="text-sm text-zinc-500 leading-relaxed max-w-xs">
@@ -93,9 +96,22 @@ export default function Footer() {
 
         <Separator className="bg-white/5 mb-6" />
 
-        <div className="flex flex-col items-center justify-between gap-3 text-xs text-zinc-600 sm:flex-row">
-          <p>© {new Date().getFullYear()} NoSnore. All rights reserved.</p>
-          <p className="font-medium text-emerald-500/80">✨ Happy {dayName}!</p>
+        <div className="flex flex-col items-center justify-between gap-6 text-xs text-zinc-600 sm:flex-row sm:gap-3">
+          <p className="flex-1 text-center sm:text-left">
+            © {new Date().getFullYear()} NoSnore. All rights reserved.
+          </p>
+
+          <div className="flex h-6 shrink-0 items-center justify-center opacity-40 grayscale transition-all hover:opacity-100 hover:grayscale-0">
+            <img
+              src="/pulse-removebg-previewty.png"
+              alt="PulsePing"
+              className="h-full w-auto object-contain"
+            />
+          </div>
+
+          <p className="flex-1 font-medium text-emerald-500/80 text-center sm:text-right">
+            ✨ Happy {dayName}!
+          </p>
         </div>
       </div>
     </footer>
