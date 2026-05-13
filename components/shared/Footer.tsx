@@ -51,24 +51,6 @@ export default function Footer() {
               Keep your free-tier backends alive with scheduled HTTP pings.
               Open-source, privacy-first, and always free.
             </p>
-            <div className="mt-6 flex items-center gap-3">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-zinc-400 transition hover:border-white/20 hover:text-white"
-              >
-                <GitFork className="h-4 w-4" />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-zinc-400 transition hover:border-white/20 hover:text-white"
-              >
-                <MessageSquare className="h-4 w-4" />
-              </a>
-            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:gap-x-16">

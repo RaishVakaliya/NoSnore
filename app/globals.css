@@ -163,3 +163,13 @@
     transform: translate(50%, 50%);
   }
 }
+
+::selection {
+  background-color: #d4f0356f !important;
+  color: white !important;
+}
+
+::-moz-selection {
+  background-color: #d4f0356f !important;
+  color: white !important;
+}
